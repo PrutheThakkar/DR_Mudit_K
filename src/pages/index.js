@@ -1,178 +1,529 @@
-import * as React from "react"
+import React, { useState, useLayoutEffect } from "react";
+import { Link } from "gatsby";
 
-const pageStyles = {
-  color: "#232129",
-  padding: 96,
-  fontFamily: "-apple-system, Roboto, sans-serif, serif",
-}
-const headingStyles = {
-  marginTop: 0,
-  marginBottom: 64,
-  maxWidth: 320,
-}
-const headingAccentStyles = {
-  color: "#663399",
-}
-const paragraphStyles = {
-  marginBottom: 48,
-}
-const codeStyles = {
-  color: "#8A6534",
-  padding: 4,
-  backgroundColor: "#FFF4DB",
-  fontSize: "1.25rem",
-  borderRadius: 4,
-}
-const listStyles = {
-  marginBottom: 96,
-  paddingLeft: 0,
-}
-const listItemStyles = {
-  fontWeight: 300,
-  fontSize: 24,
-  maxWidth: 560,
-  marginBottom: 30,
-}
+import Layout from "../component/Layout";
+import FaqSection from "../component/faq";
 
-const linkStyle = {
-  color: "#8954A8",
-  fontWeight: "bold",
-  fontSize: 16,
-  verticalAlign: "5%",
-}
+import { Swiper, SwiperSlide } from "swiper/react";
+import {
+  Mousewheel,
+  Navigation,
+  Pagination,
+  Autoplay,
+} from "swiper/modules";
 
-const docLinkStyle = {
-  ...linkStyle,
-  listStyleType: "none",
-  marginBottom: 24,
-}
+import "swiper/css";
+import "swiper/css/navigation";
+import "swiper/css/pagination";
+import { gsap } from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
 
-const descriptionStyle = {
-  color: "#232129",
-  fontSize: 14,
-  marginTop: 10,
-  marginBottom: 0,
-  lineHeight: 1.25,
-}
+import aboutImage from "../images/dmk_homepage_about.webp";
+import whyChooseImage from "../images/why-choose-dr-mudit.webp";
+import expimg1 from "../images/hip-replacement.webp";
+import expimg2 from "../images/knee-replacement.webp";
+import expimg3 from "../images/regenerative-treatment.webp";
+import expimg4 from "../images/pain-management.webp";
 
-const docLink = {
-  text: "Documentation",
-  url: "https://www.gatsbyjs.com/docs/",
-  color: "#8954A8",
-}
+import patientStory1Img from "../images/patient_stories_4_manish_anand.webp";
+import patientStory2Img from "../images/patient_stories_1_louise_w.webp";
+import patientStory3Img from "../images/patient_stories_2_ronak_khemka.webp";
+import patientStory4Img from "../images/patient_stories_3_jeff_rouse.webp";
 
-const badgeStyle = {
-  color: "#fff",
-  backgroundColor: "#088413",
-  border: "1px solid #088413",
-  fontSize: 11,
-  fontWeight: "bold",
-  letterSpacing: 1,
-  borderRadius: 4,
-  padding: "4px 6px",
-  display: "inline-block",
-  position: "relative",
-  top: -2,
-  marginLeft: 10,
-  lineHeight: 1,
-}
-
-const links = [
+const faqItems = [
   {
-    text: "Tutorial",
-    url: "https://www.gatsbyjs.com/docs/tutorial/getting-started/",
-    description:
-      "A great place to get started if you're new to web development. Designed to guide you through setting up your first Gatsby site.",
-    color: "#E95800",
+    question: "Can my knee or hip be treated without surgery?",
+    answer:
+      "In early and moderate stages, many patients improve with weight management, medicines, physiotherapy, exercises, activity modification and, in some cases, injections. Surgery is usually discussed only when pain, stiffness or deformity continue despite these measures and start affecting basic daily activities like walking, climbing stairs or sleeping.",
   },
   {
-    text: "How to Guides",
-    url: "https://www.gatsbyjs.com/docs/how-to/",
-    description:
-      "Practical step-by-step guides to help you achieve a specific goal. Most useful when you're trying to get something done.",
-    color: "#1099A8",
+    question: "When should I start thinking about joint replacement?",
+    answer:
+      "Joint replacement may be considered when pain and stiffness become persistent, daily activities become difficult and non-surgical treatments no longer provide enough relief.",
   },
   {
-    text: "Reference Guides",
-    url: "https://www.gatsbyjs.com/docs/reference/",
-    description:
-      "Nitty-gritty technical descriptions of how Gatsby works. Most useful when you need detailed information about Gatsby's APIs.",
-    color: "#BC027F",
+    question: "How painful is hip or knee replacement surgery?",
+    answer:
+      "Modern anaesthesia, pain-control techniques and rehabilitation planning help manage discomfort effectively. Pain usually reduces gradually as healing and mobility improve.",
   },
   {
-    text: "Conceptual Guides",
-    url: "https://www.gatsbyjs.com/docs/conceptual/",
-    description:
-      "Big-picture explanations of higher-level Gatsby concepts. Most useful for building understanding of a particular topic.",
-    color: "#0D96F2",
+    question:
+      "How many days will I be in the hospital, and when can I walk?",
+    answer:
+      "Hospital stay depends on the procedure and the patient's overall health. Many patients begin assisted walking shortly after surgery under the guidance of the medical and physiotherapy team.",
+  },
+];
+
+const patientStories = [
+  {
+    id: 1,
+    image: patientStory1Img,
+    imageAlt: "Patient with the orthopaedic medical team",
+    quote:
+      "My father underwent a robotic partial knee replacement surgery performed by Dr. Khanna. Surgery – The operation went very well, and my father was able to walk properly within a few days without needing a walker. Partial knee surgery is considered quite tricky, but the doctor performed it with perfection. Professional Behaviour – Dr. Khanna and his team were very professional from the beginning. They patiently addressed all our concerns, were always available for questions, and provided clear and helpful responses. Post-Surgery Care – The doctor and his team continued to support us after the surgery, which kept us motivated. My father felt very positive throughout his recovery. Recommendation – I would highly recommend Dr. Khanna to anyone considering orthopaedic surgery. You will truly be in good hands.",
+    name: "Manish Anand",
   },
   {
-    text: "Plugin Library",
-    url: "https://www.gatsbyjs.com/plugins",
-    description:
-      "Add functionality and customize your Gatsby site or app with thousands of plugins built by our amazing developer community.",
-    color: "#8EB814",
+    id: 2,
+    image: patientStory2Img,
+    imageAlt: "Patient after successful knee replacement",
+    quote:
+      "I traveled to India from New Zealand to get a hip replacement. I was lucky enough to have been referred to Dr Mudit Khanna. Dr Khanna was more than willing to answer all my pre op questions and after reading his credentials, I was very confident in his abilities. He is a revered orthopaedic surgeon and highly respected. My operation went smoothly and after two weeks I was walking normally. The post op care was exceptional and I was discharged from hospital only when I was feeling well and ready to leave. Dr Khanna took the time to take me through any restrictions and showed me how to walk correctly to maximise my recovery. I highly recommend Dr Mudit Khanna and thank you for enabling me to return to my active lifestyle.",
+    name: "Louise W",
   },
   {
-    text: "Build and Host",
-    url: "https://www.gatsbyjs.com/cloud",
-    badge: true,
-    description:
-      "Now you’re ready to show the world! Give your Gatsby site superpowers: Build and host on Netlify. Get started for free!",
-    color: "#663399",
+    id: 3,
+    image: patientStory3Img,
+    imageAlt: "Patient during orthopaedic recovery",
+    quote:
+      "I came from Myanmar relating bilateral knee replacement surgery of my mother with Dr.Mudit Khanna. The Doctor explained us well about the surgery, he has alot of patience and kindness.He has Gifted hands, the surgery went perfect for both knees. Dr.Mudit Khanna and his team,Dr.Ramiz and Ms.Bhakti continued caring my mother so much that she was able to walk on the same day of surgery and recovering at her best.He is very very reliable and trustworthy, from the first meet of OPD day to discharge and follow-up, he took care of my mom with full responsibility. As the Doctor promised, we had no worries about the surgery and recovery.He made my mother walk again and stand on her knees independently. We are so grateful for your exceptional care.May your days be healthy like you make it for others.",
+    name: "Ronak Khemka",
   },
-]
+  {
+    id: 4,
+    image: patientStory4Img,
+    imageAlt: "Patient following robotic partial knee replacement",
+    quote:
+      "First thing I would like to say is that if you are considering any type of orthopaedic surgery then Dr Mudit Khanna is your man. I have just spent the last 2 1/2 weeks at Wockhardt Hospital having my knee replaced by Dr Khanna and his wonderful team. From the very first meeting with Dr Khanna you are made to feel at ease with your about to go through. The before and after care could not be any better and Dr Khanna’s calm and positive attitude makes it much easier. I would have no hesitation to recommend him and his team as the whole experience has been 1st class and hugely cost effective. Thank you again Dr Khanna!",
+    name: "Jeff Rouse",
+  },
+];
+
+
 
 const IndexPage = () => {
+  const [activeIndex, setActiveIndex] = useState(0);
+
+  const toggleFaq = index => {
+    setActiveIndex(currentIndex =>
+      currentIndex === index ? null : index
+    );
+  };
+
+  useLayoutEffect(() => {
+
+    gsap.registerPlugin(ScrollTrigger);
+
+
+    const timer = setTimeout(() => {
+
+      const whySection = document.querySelector(
+        ".why-choose-mudit-khanna"
+      );
+
+      const whySwiper = document.querySelector(
+        ".why-choose-slider"
+      );
+
+
+      if (!whySection || !whySwiper) return;
+
+
+      const swiperInstance =
+        whySwiper.swiper;
+
+
+      if (!swiperInstance) return;
+
+
+      const totalSlides =
+        swiperInstance.slides.length;
+
+
+      let currentSlide = 0;
+
+
+      ScrollTrigger.create({
+
+        trigger: whySection,
+
+        start: "top top",
+
+        end: () =>
+          `+=${window.innerHeight * totalSlides}`,
+
+        pin: true,
+
+        pinSpacing: true,
+
+        scrub: 1,
+
+        anticipatePin: 1,
+
+
+        snap: {
+          snapTo: 1 / (totalSlides - 1),
+          duration: {
+            min: 0.2,
+            max: 0.6,
+          },
+          ease: "power1.inOut",
+        },
+
+
+        onUpdate(self) {
+
+          const slideIndex = Math.min(
+            totalSlides - 1,
+            Math.floor(
+              self.progress * totalSlides
+            )
+          );
+
+
+          if (
+            slideIndex !== currentSlide
+          ) {
+
+            currentSlide = slideIndex;
+
+
+            swiperInstance.slideTo(
+              slideIndex,
+              800
+            );
+
+          }
+
+        },
+
+
+        onEnter() {
+
+          currentSlide = 0;
+
+          swiperInstance.slideTo(
+            0,
+            0
+          );
+
+        },
+
+
+        onEnterBack() {
+
+          currentSlide =
+            totalSlides - 1;
+
+
+          swiperInstance.slideTo(
+            totalSlides - 1,
+            0
+          );
+
+        },
+
+
+      });
+
+
+      ScrollTrigger.refresh();
+
+
+    }, 500);
+
+
+    return () => {
+
+      clearTimeout(timer);
+
+      ScrollTrigger.getAll().forEach(
+        trigger => trigger.kill()
+      );
+
+    };
+
+
+  }, []);
+
   return (
-    <main style={pageStyles}>
-      <h1 style={headingStyles}>
-        Congratulations
-        <br />
-        <span style={headingAccentStyles}>
-          — you just made a Gatsby site! 🎉🎉🎉
-        </span>
-      </h1>
-      <p style={paragraphStyles}>
-        Edit <code style={codeStyles}>src/pages/index.js</code> to see this page
-        update in real-time. 😎
-      </p>
-      <ul style={listStyles}>
-        <li style={docLinkStyle}>
-          <a
-            style={linkStyle}
-            href={`${docLink.url}?utm_source=starter&utm_medium=start-page&utm_campaign=minimal-starter`}
-          >
-            {docLink.text}
-          </a>
-        </li>
-        {links.map(link => (
-          <li key={link.url} style={{ ...listItemStyles, color: link.color }}>
-            <span>
-              <a
-                style={linkStyle}
-                href={`${link.url}?utm_source=starter&utm_medium=start-page&utm_campaign=minimal-starter`}
+    <Layout>
+      <section className="home-hero">
+        <div className="container home-hero__container">
+          <div className="home-hero__heading-wrap">
+            <h1 className="home-hero__title">
+              <span className="home-hero__title-top">
+                India’s Leading
+              </span><br />
+
+              <span className="home-hero__title-highlight-blue">
+                Robotic
+              </span> Hip &<br />
+
+              <span className="home-hero__title-highlight">
+                Knee Surgeon
+              </span>
+            </h1>
+          </div>
+
+          <div className="home-hero__bottom">
+            <div className="left">
+              <h3>
+                Dr Mudit Khanna · MCh, MRCS, MS Orthopaedics
+              </h3>
+
+              <p>
+                Senior Orthopaedic &amp; Joint Replacement Surgeon
+                <br />
+                Wockhardt Hospitals, Mumbai Central
+              </p>
+            </div>
+
+            <div className="right">
+              <Link
+                to="/contact/"
+                className="btn btn--primary home-hero__button"
               >
-                {link.text}
+                Book An Appointment
+              </Link>
+
+              <a
+                href="https://wa.me/918657790513"
+                className="btn btn--outline home-hero__button"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                WhatsApp The Clinic
               </a>
-              {link.badge && (
-                <span style={badgeStyle} aria-label="New Badge">
-                  NEW!
-                </span>
-              )}
-              <p style={descriptionStyle}>{link.description}</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section className="dr-mudit">
+        <div className="container">
+          <div className="left">
+            <img
+              src={aboutImage}
+              alt="Dr. Mudit Khanna"
+            />
+            <div className="exp">
+
+              <ul >
+                <li>
+                  <p className="number">18+</p>
+                  <p className="txt">Years of Experience</p>
+                </li>
+
+                <li>
+                  <p className="number">8000+</p>
+                  <p className="txt">Joint Replacements</p>
+                </li>
+
+                <li>
+                  <p className="number">15000+</p>
+                  <p className="txt">Surgeries Assisted</p>
+                </li>
+
+                <li>
+                  <p className="number">500+</p>
+                  <p className="txt">Recommendations</p>
+                </li>
+              </ul>
+            </div>
+          </div>
+
+          <div className="right">
+            <h2>Meet Dr. Mudit Khanna</h2>
+
+            <p>
+              Dr. Mudit Khanna is a fellowship-trained Consultant Joint
+              Replacement Surgeon with over 18 years of specialized experience
+              in hip and knee replacement. Trained at leading orthopaedic
+              centres across the UK, Germany, USA and Singapore, he is
+              recognized for pioneering the Direct Anterior Approach (DAA) Hip
+              Replacement in India.
+            </p>
+
+            <p>
+              Among the few surgeons specializing in robotic-assisted hip and
+              knee replacement, he combines advanced technology with a
+              patient-first approach to deliver precise, personalized care.
+            </p>
+
+            <p>
+              Committed to innovation and evidence-based treatment, Dr. Khanna
+              recommends surgery only when it offers the best path to lasting
+              mobility, comfort and quality of life.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <section className="precision-every-joint">
+        <div className="container">
+          <h2>Precision in Every Joint</h2>
+
+          <div className="column-wrap">
+            <div className="columns top">
+              <div className="left">
+                <h3>Hip Replacement</h3>
+
+                <p className="paragraph">
+                  Hip replacement restores smooth, pain-free movement by
+                  replacing the damaged hip joint with advanced artificial
+                  components. It is often recommended when arthritis, avascular
+                  necrosis or injury causes persistent pain, stiffness and
+                  reduced mobility despite conservative treatment.
+                </p>
+
+                <div className="img-wrap">
+                  <img
+                    src={expimg1}
+                    alt="Hip replacement"
+                  />
+                </div>
+
+                <Link to="/hip-replacement/">
+                  Learn More
+                </Link>
+              </div>
+
+              <div className="right">
+                <h3>Knee Replacement</h3>
+
+                <p className="paragraph">
+                  Knee replacement replaces the damaged knee joint with
+                  advanced implants to relieve pain, restore mobility and
+                  improve quality of life when non-surgical treatments no
+                  longer provide relief.
+                </p>
+
+                <div className="img-wrap">
+                  <img
+                    src={expimg2}
+                    alt="Hip replacement"
+                  />
+                </div>
+
+                <Link to="/knee-replacement/">
+                  Learn More
+                </Link>
+              </div>
+            </div>
+
+            <div className="columns bottom">
+              <div className="left">
+                <h3>Regenerative Treatment</h3>
+
+                <p className="paragraph">
+                  Stimulates the body's natural healing to reduce pain, repair
+                  damaged tissues and improve joint function.
+                </p>
+
+                <div className="img-wrap">
+                  <img
+                    src={expimg3}
+                    alt="Hip replacement"
+                  />
+                </div>
+
+                <Link to="/regenerative-treatment/">
+                  Learn More
+                </Link>
+              </div>
+
+              <div className="right">
+                <h3>Pain Management</h3>
+
+                <p className="paragraph">
+                  Personalized treatments to relieve chronic joint pain,
+                  improve mobility and enhance your quality of life.
+                </p>
+
+                <div className="img-wrap">
+                  <img
+                    src={expimg4}
+                    alt="Hip replacement"
+                  />
+                </div>
+
+                <Link to="/pain-management/">
+                  Learn More
+                </Link>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section className="why-choose-mudit-khanna">
+        <div className="container">
+          <div className="section-heading section-heading--center">
+            <span className="section-heading__eyebrow">
+              Why Choose Us
             </span>
-          </li>
-        ))}
-      </ul>
-      <img
-        alt="Gatsby G Logo"
-        src="data:image/svg+xml,%3Csvg width='24' height='24' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M12 2a10 10 0 110 20 10 10 0 010-20zm0 2c-3.73 0-6.86 2.55-7.75 6L14 19.75c3.45-.89 6-4.02 6-7.75h-5.25v1.5h3.45a6.37 6.37 0 01-3.89 4.44L6.06 9.69C7 7.31 9.3 5.63 12 5.63c2.13 0 4 1.04 5.18 2.65l1.23-1.06A7.959 7.959 0 0012 4zm-8 8a8 8 0 008 8c.04 0 .09 0-8-8z' fill='%23639'/%3E%3C/svg%3E"
-      />
-    </main>
-  )
-}
 
-export default IndexPage
+            <h2 className="section-heading__title">
+              Why Choose Dr. Mudit Khanna?
+            </h2>
+          </div>
 
-export const Head = () => <title>Home Page</title>
+          <Swiper
+            className="why-choose-slider"
+            modules={[Navigation, Pagination]}
+            direction="vertical"
+            spaceBetween={24}
+            slidesPerView={1}
+            loop={false}
+            speed={800}
+            allowTouchMove={false}
+            autoplay={false}
+            pagination={{
+              clickable: true,
+            }}
+          >
+            {
+              patientStories.map((story) => (
+                <SwiperSlide key={story.id}>
+                  <div className="why-choose-card">
+
+                    <div className="why-choose-card__image">
+                      <img
+                        src={story.image}
+                        alt={story.imageAlt}
+                      />
+                    </div>
+
+                    <div className="why-choose-card__content">
+
+                      <p>
+                        {story.quote}
+                      </p>
+
+                      <p className="auto-name">
+                        - {story.name}
+                      </p>
+
+                    </div>
+
+                  </div>
+                </SwiperSlide>
+              ))
+            }
+          </Swiper>
+        </div>
+      </section>
+
+      <FaqSection />
+
+    </Layout>
+  );
+};
+
+export default IndexPage;
+
+export const Head = () => (
+  <>
+    <html lang="en" />
+
+    <title>
+      Dr. Mudit Khanna | Robotic Hip &amp; Knee Surgeon
+    </title>
+
+    <meta
+      name="description"
+      content="Dr. Mudit Khanna is a robotic hip and knee replacement surgeon."
+    />
+  </>
+);

@@ -1,0 +1,19 @@
+.inside-banner {
+  margin-top: 60px;
+}
+.inside-banner h1 {
+  font-size: 64px;
+}
+.inside-banner h1 span {
+  color: #2171FF;
+}
+.inside-banner img {
+  margin-top: 50px;
+  width: 100%;
+}
+.inside-banner p {
+  width: 80%;
+  text-align: center;
+  margin: 0 auto;
+  margin-top: 50px;
+}/*# sourceMappingURL=inside.css.map */
