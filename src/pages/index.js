@@ -450,9 +450,7 @@ const IndexPage = () => {
       <section className="why-choose-mudit-khanna">
         <div className="container">
           <div className="section-heading section-heading--center">
-            <span className="section-heading__eyebrow">
-              Why Choose Us
-            </span>
+          
 
             <h2 className="section-heading__title">
               Why Choose Dr. Mudit Khanna?

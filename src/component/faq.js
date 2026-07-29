@@ -101,9 +101,9 @@ const FaqSection = () => {
                     aria-expanded={isOpen}
                     aria-controls={contentId}
                   >
-                    <span className="faq-accordion__question">
+                    <p className="faq-accordion__question">
                       {item.question}
-                    </span>
+                    </p>
 
                     <AccordionIcon isOpen={isOpen} />
                   </button>
