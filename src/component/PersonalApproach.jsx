@@ -22,272 +22,220 @@ const points = [
 const PersonalApproach = () => {
 
 
-const sectionRef = useRef(null);
+  const sectionRef = useRef(null);
 
 
-useLayoutEffect(()=>{
+  useLayoutEffect(() => {
 
 
-gsap.registerPlugin(ScrollTrigger);
+    gsap.registerPlugin(ScrollTrigger);
 
 
-const ctx = gsap.context(()=>{
+    const ctx = gsap.context(() => {
 
 
-const points =
-document.querySelectorAll(
-".approach-point"
-);
+      const points =
+        document.querySelectorAll(
+          ".approach-point"
+        );
 
 
 
-const dots =
-document.querySelectorAll(
-".approach-dot"
-);
+      const dots =
+        document.querySelectorAll(
+          ".approach-dot"
+        );
 
 
 
-const tl = gsap.timeline({
+      const tl = gsap.timeline({
 
-  scrollTrigger: {
+        scrollTrigger: {
 
-    trigger: sectionRef.current,
+          trigger: sectionRef.current,
 
-    start: "top 70%",
+          start: "top 70%",
 
-    end: "bottom 40%",
+          end: "bottom 40%",
 
-    toggleActions: "play none none reverse",
+          toggleActions: "play none none reverse",
 
-  }
+        }
 
-});
+      });
 
 
-points.forEach((point, index) => {
+      points.forEach((point, index) => {
 
 
-  tl.to(point, {
+        tl.to(point, {
 
-    opacity: 1,
+          opacity: 1,
 
-    y: 0,
+          y: 0,
 
-    duration: 1,
+          duration: 1,
 
-    ease: "power4.out",
-    delay:"-0.75",
+          ease: "power4.out",
+          delay: "-0.75",
 
 
-    onStart: () => {
+          onStart: () => {
 
-      dots[index].classList.add("active");
+            dots[index].classList.add("active");
 
-      point.classList.add("active");
+            point.classList.add("active");
 
-    },
+          },
 
 
-    onReverseComplete: () => {
+          onReverseComplete: () => {
 
-      dots[index].classList.remove("active");
+            dots[index].classList.remove("active");
 
-      point.classList.remove("active");
+            point.classList.remove("active");
 
-    }
+          }
 
 
-  })
+        })
 
-  .to({}, {
+          .to({}, {
 
-    duration: 0.45
+            duration: 0.45
 
-  });
+          });
 
 
-});
+      });
 
 
-points.forEach((point,index)=>{
+      points.forEach((point, index) => {
 
 
-tl.to(point,{
+        tl.to(point, {
 
-opacity:1,
+          opacity: 1,
 
-y:0,
+          y: 0,
 
-duration:.2,
+          duration: .2,
 
-ease:"power3.out",
+          ease: "power3.out",
 
 
-onStart:()=>{
+          onStart: () => {
 
 
-dots[index]
-.classList.add("active");
+            dots[index]
+              .classList.add("active");
 
 
-point.classList.add(
-"active"
-);
+            point.classList.add(
+              "active"
+            );
 
 
-},
+          },
 
 
-onReverseComplete:()=>{
+          onReverseComplete: () => {
 
 
-dots[index]
-.classList.remove(
-"active"
-);
+            dots[index]
+              .classList.remove(
+                "active"
+              );
 
 
-point.classList.remove(
-"active"
-);
+            point.classList.remove(
+              "active"
+            );
 
 
-}
+          }
 
-})
+        })
 
+          .to(
+            {},
+            {
+              duration: .10
+            }
+          );
 
-.to(
-{},
-{
-duration:.10
-}
-);
+      });
+    }, sectionRef);
+    return () => ctx.revert();
 
 
+  }, []);
 
-});
+  return (
+    <section
+      className="personal-approach"
+      ref={sectionRef}
+    >
 
+      <div className="container">
+        <div className="personal-grid">
+          {/* IMAGE */}
+          <div className="personal-image">
+            <img
 
+              src={doctorImage}
 
-},sectionRef);
+              alt="Personal approach"
 
+            />
+          </div>
+          {/* CONTENT */}
 
 
-return ()=>ctx.revert();
+          <div className="personal-content">
+            <h2>
+              Personal Approach
+            </h2>
+            <div className="approach-list">
+              <div className="timeline-line"></div>
+              {
+                points.map(
+                  (item, index) => (
 
 
-},[]);
+                    <div
 
+                      className="approach-point"
 
+                      key={index}
 
-return (
+                    >
 
 
-<section
-className="personal-approach"
-ref={sectionRef}
->
+                      <span
+                        className="approach-dot"
+                      />
 
 
-<div className="container">
 
+                      <p>
+                        {item}
+                      </p>
 
-<div className="personal-grid">
 
+                    </div>
 
 
-{/* IMAGE */}
+                  ))
+              }
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
 
 
-<div className="personal-image">
-
-
-<img
-
-src={doctorImage}
-
-alt="Personal approach"
-
-/>
-
-
-</div>
-
-
-
-
-
-{/* CONTENT */}
-
-
-<div className="personal-content">
-
-
-<h2>
-Personal Approach
-</h2>
-
-
-
-<div className="approach-list">
-
-
-<div className="timeline-line"></div>
-
-
-
-{
-points.map(
-(item,index)=>(
-
-
-<div
-
-className="approach-point"
-
-key={index}
-
->
-
-
-<span
-className="approach-dot"
-/>
-
-
-
-<p>
-{item}
-</p>
-
-
-</div>
-
-
-))
-}
-
-
-
-</div>
-
-
-</div>
-
-
-
-</div>
-
-
-</div>
-
-
-</section>
-
-
-)
+  )
 
 };
 

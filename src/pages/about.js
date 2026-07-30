@@ -1,4 +1,4 @@
-import React, { useState, useLayoutEffect } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Link } from "gatsby";
 
 import Layout from "../component/Layout";
@@ -126,12 +126,124 @@ const membershipData = [
 
 
 
-
 const Aboutpage = () => {
   const [activeIndex, setActiveIndex] = useState(0);
   const [activeTab, setActiveTab] = useState(0);
 
+  const expertiseSwiperRef = useRef(null);
+
+  const mapObjectRef = useRef(null);
+  const mapTimelineRef = useRef(null);
+  const mapScrollTriggerRef = useRef(null);
+
   const activeContent = expertiseData[activeTab];
+
+  const handleMapLoad = () => {
+    if (typeof window === "undefined") return;
+
+    gsap.registerPlugin(ScrollTrigger);
+
+    const mapObject = mapObjectRef.current;
+    const svgDocument = mapObject?.contentDocument;
+
+    if (!svgDocument) return;
+
+    const mapPoints = Array.from(
+      svgDocument.querySelectorAll(".map-point")
+    );
+
+    if (!mapPoints.length) {
+      console.warn(
+        'No map points found. Add class="map-point" to the SVG circles.'
+      );
+      return;
+    }
+
+    // Prevent duplicate animations during hot reload.
+    mapTimelineRef.current?.kill();
+    mapScrollTriggerRef.current?.kill();
+
+    gsap.set(mapPoints, {
+      opacity: 0,
+      scale: 0.3,
+      y: -25,
+      transformOrigin: "50% 50%",
+      transformBox: "fill-box",
+    });
+
+    const timeline = gsap.timeline({
+      paused: true,
+      repeat: -1,
+      repeatDelay: 0.3,
+    });
+
+    mapPoints.forEach((point) => {
+      timeline
+        .fromTo(
+          point,
+          {
+            opacity: 0,
+            scale: 0.3,
+            y: -30,
+          },
+          {
+            opacity: 1,
+            scale: 1.5,
+            y: 0,
+            duration: 0.55,
+            ease: "bounce.out",
+          }
+        )
+        .to(point, {
+          scale: 1,
+          duration: 0.2,
+          ease: "power2.out",
+        })
+        .to(point, {
+          scale: 1.25,
+          duration: 0.25,
+          ease: "power2.inOut",
+          yoyo: true,
+          repeat: 1,
+        })
+        .to(point, {
+          opacity: 0,
+          scale: 0.5,
+          duration: 0.3,
+          delay: 0.5,
+          ease: "power2.in",
+        });
+    });
+
+    mapTimelineRef.current = timeline;
+
+    mapScrollTriggerRef.current = ScrollTrigger.create({
+      trigger: mapObject,
+      start: "top 80%",
+      end: "bottom 20%",
+
+      onEnter: () => timeline.play(),
+      onEnterBack: () => timeline.play(),
+
+      onLeave: () => timeline.pause(),
+      onLeaveBack: () => timeline.pause(),
+    });
+
+    ScrollTrigger.refresh();
+  };
+
+  useEffect(() => {
+    return () => {
+      mapTimelineRef.current?.kill();
+      mapScrollTriggerRef.current?.kill();
+    };
+  }, []);
+
+  useEffect(() => {
+    if (!expertiseSwiperRef.current) return;
+
+    expertiseSwiperRef.current.slideTo(activeTab);
+  }, [activeTab]);
 
   return (
     <Layout>
@@ -140,7 +252,19 @@ const Aboutpage = () => {
       <section className="map-section">
         <div className="container">
           <h2>A Global Foundation of Surgical Excellence</h2>
-          <img src={aboutImagemap} />
+          <object
+            ref={mapObjectRef}
+            data={aboutImagemap}
+            type="image/svg+xml"
+            className="global-map-object"
+            aria-label="Global surgical training locations"
+            onLoad={handleMapLoad}
+          >
+            <img
+              src={aboutImagemap}
+              alt="Global surgical training locations"
+            />
+          </object>
           <ul>
             <li>
               <h3>Asia Pacific Zimmer Fellowship</h3>
@@ -171,109 +295,87 @@ const Aboutpage = () => {
       </section>
 
       <section className="expertise-tabs-section">
-
         <div className="container">
-
-
           <div className="expertise-layout">
-
-
-            {/* LEFT TABS */}
-
             <div className="expertise-tabs">
+              <h2>Area Of Expertise</h2>
 
-
-              <h2>
-                Area Of Expertise
-              </h2>
-
-
-              <div className="tabs-list">
-
-                {
-                  expertiseData.map((item, index) => (
-
-                    <button
-                      key={index}
-                      className={
-                        activeTab === index
-                          ? "active"
-                          : ""
-                      }
-
-                      onClick={() =>
-                        setActiveTab(index)
-                      }
-                    >
-
-                      {item.title}
-
-                    </button>
-
-                  ))
-                }
-
+              {/* Desktop vertical tabs */}
+              <div className="tabs-list tabs-list--desktop">
+                {expertiseData.map((item, index) => (
+                  <button
+                    type="button"
+                    key={item.title}
+                    className={activeTab === index ? "active" : ""}
+                    onClick={() => setActiveTab(index)}
+                    aria-pressed={activeTab === index}
+                  >
+                    {item.title}
+                  </button>
+                ))}
               </div>
 
-
+              {/* Tablet and mobile Swiper tabs */}
+              <div className="expertise-tabs-mobile">
+                <Swiper
+                  className="expertise-tabs-slider"
+                  modules={[Navigation]}
+                  navigation={true}
+                  speed={600}
+                  slidesPerView="auto"
+                  spaceBetween={14}
+                  centeredSlides={true}
+                  centeredSlidesBounds={true}
+                  slideToClickedSlide={true}
+                  watchSlidesProgress={true}
+                  onSwiper={(swiper) => {
+                    expertiseSwiperRef.current = swiper;
+                    swiper.slideTo(activeTab, 0);
+                  }}
+                  onSlideChange={(swiper) => {
+                    setActiveTab(swiper.activeIndex);
+                  }}
+                >
+                  {expertiseData.map((item, index) => (
+                    <SwiperSlide key={item.title}>
+                      <button
+                        type="button"
+                        className={`expertise-slide-button ${activeTab === index ? "active" : ""
+                          }`}
+                        onClick={() => {
+                          setActiveTab(index);
+                          expertiseSwiperRef.current?.slideTo(index);
+                        }}
+                        aria-pressed={activeTab === index}
+                      >
+                        {item.title}
+                      </button>
+                    </SwiperSlide>
+                  ))}
+                </Swiper>
+              </div>
             </div>
 
-
-
-
-            {/* RIGHT CONTENT */}
-
-
-            <div className="expertise-content">
-
-
+            <div className="expertise-content" key={activeTab}>
               <div className="content-info">
+                <h3>{activeContent.title}</h3>
 
+                <p>{activeContent.description}</p>
 
-                <h3>
-                  {activeContent.title}
-                </h3>
-
-
-                <p>
-                  {activeContent.description}
-                </p>
-
-
-
-                <a
-                  href={activeContent.link}
-                  className="details-btn"
-                >
+                <Link to={activeContent.link} className="details-btn">
                   View Details
-                </a>
-
-
+                </Link>
               </div>
 
-
-
               <div className="content-image">
-
                 <img
                   src={activeContent.image}
                   alt={activeContent.title}
                 />
-
               </div>
-
-
-
             </div>
-
-
-
           </div>
-
-
         </div>
-
-
       </section>
 
 
@@ -442,7 +544,7 @@ const Aboutpage = () => {
         </div>
       </section>
 
-     <PersonalApproach />
+      <PersonalApproach />
 
     </Layout>
   );

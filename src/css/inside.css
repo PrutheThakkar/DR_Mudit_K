@@ -2,7 +2,17 @@
   margin-top: 60px;
 }
 .inside-banner h1 {
-  font-size: 64px;
+  font-size: clamp(2.5rem, -1.1986rem + 4.3321vw, 4rem);
+}
+@media (max-width: 1365px) {
+  .inside-banner h1 {
+    font-size: clamp(1.875rem, 1.1529rem + 1.5064vw, 2.438rem);
+  }
+}
+@media (max-width: 767px) {
+  .inside-banner h1 br {
+    display: none;
+  }
 }
 .inside-banner h1 span {
   color: #2171FF;
@@ -16,4 +26,14 @@
   text-align: center;
   margin: 0 auto;
   margin-top: 50px;
+}
+@media (max-width: 1000px) {
+  .inside-banner p {
+    width: 90%;
+  }
+}
+@media (max-width: 767px) {
+  .inside-banner p {
+    width: 100%;
+  }
 }/*# sourceMappingURL=inside.css.map */
