@@ -8,6 +8,8 @@ import "../css/home.css";
 import "../css/about.css";
 import "../css/inside.css";
 import "../css/contact.css";
+import "../css/insights.css";
+import "../css/patient-stories.css";
 
 const Layout = ({ children }) => {
   return (

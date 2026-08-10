@@ -279,7 +279,7 @@
     width: 42px;
     height: 42px;
     margin-top: 0;
-    border: 1px solid #1768ff;
+    border: 1px solid #2875f5;
     border-radius: 50%;
     background: #071a3d;
     color: #fff;
@@ -298,7 +298,7 @@
   }
   .expertise-tabs-section .expertise-tabs-slider .swiper-button-prev:hover,
   .expertise-tabs-section .expertise-tabs-slider .swiper-button-next:hover {
-    background: #1768ff;
+    background: #2875f5;
   }
   .expertise-tabs-section .expertise-tabs-slider .swiper-button-prev {
     left: 3px;

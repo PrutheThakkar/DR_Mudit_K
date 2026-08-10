@@ -633,6 +633,55 @@ section {
   }
 }
 
+/* Shared carousel navigation */
+.swiper-button-prev,
+.swiper-button-next {
+  width: 42px;
+  height: 42px;
+  margin-top: 0;
+  border: 1px solid $color-primary;
+  border-radius: 50%;
+  background: #071a3d;
+  color: $color-white;
+  box-shadow: 0 5px 18px rgba(0, 0, 0, 0.3);
+  transform: translateY(-50%);
+  transition: border-color 0.25s ease, background-color 0.25s ease,
+    box-shadow 0.25s ease, opacity 0.25s ease, transform 0.25s ease;
+
+  &::after {
+    font-size: 15px;
+    font-weight: 700;
+  }
+
+  &:hover {
+    border-color: $color-primary;
+    background: $color-primary;
+    box-shadow: 0 0 12px rgba(40, 117, 245, 0.55);
+  }
+
+  &:focus-visible {
+    outline: 3px solid rgba(40, 117, 245, 0.5);
+    outline-offset: 3px;
+  }
+
+  &.swiper-button-disabled {
+    opacity: 0.35;
+    pointer-events: none;
+  }
+}
+
+@media (max-width: 767px) {
+  .swiper-button-prev,
+  .swiper-button-next {
+    width: 36px;
+    height: 36px;
+
+    &::after {
+      font-size: 13px;
+    }
+  }
+}
+
 /* =========================================================
    10. LIST STYLES
 ========================================================= */
