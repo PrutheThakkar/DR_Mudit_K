@@ -2,6 +2,8 @@ import React, { useState } from "react";
 import { Link } from "gatsby";
 
 import Layout from "../component/Layout";
+import InsideBanner from "../component/inside-banner";
+import SEO from "../component/SEO";
 import { blogPath, blogs } from "../data/blogs";
 import bannerImage from "../images/insights-banner.webp";
 
@@ -51,14 +53,13 @@ const InsightsPage = () => {
 
   return (
     <Layout>
-      <section className="insights-hero">
-        <div className="container">
-          <h1>Beyond<br /><span>The Diagnosis</span></h1>
-          <div className="insights-hero__image">
-            <img src={bannerImage} alt="Advanced knee replacement implant illustration" />
-          </div>
-        </div>
-      </section>
+      <InsideBanner
+        title="Beyond"
+        highlightedTitle="The Diagnosis"
+        image={bannerImage}
+        imageAlt="Advanced knee replacement implant illustration"
+        description={null}
+      />
 
       <section id="blogs" className="insights-listing">
         <div className="container">
@@ -112,9 +113,6 @@ const InsightsPage = () => {
 
 export default InsightsPage;
 
-export const Head = () => (
-  <>
-    <title>Insights | Dr. Mudit Khanna</title>
-    <meta name="description" content="Practical orthopaedic guidance on knee replacement, joint health, recovery and treatment decisions from Dr. Mudit Khanna." />
-  </>
+export const Head = ({ location }) => (
+  <SEO title="Insights | Dr. Mudit Khanna" description="Practical orthopaedic guidance on knee replacement, joint health, recovery and treatment decisions from Dr. Mudit Khanna." pathname={location.pathname} />
 );

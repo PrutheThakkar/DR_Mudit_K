@@ -1,5 +1,6 @@
-import React, { useLayoutEffect } from "react";
+import React, { useEffect, useLayoutEffect, useState } from "react";
 import Layout from "../component/Layout";
+import SEO from "../component/SEO";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation, Pagination } from "swiper/modules";
 
@@ -9,11 +10,11 @@ import "swiper/css/pagination";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 
-import heroImage from "../images/contact-banner.webp";
 import manishImage from "../images/patient_stories_4_manish_anand.webp";
 import louiseImage from "../images/patient_stories_1_louise_w.webp";
 import ronakImage from "../images/patient_stories_2_ronak_khemka.webp";
 import jeffImage from "../images/patient_stories_3_jeff_rouse.webp";
+import patientstory from "../images/patient-story_banner.webp";
 
 const patientStories = [
   {
@@ -53,6 +54,22 @@ const patientStories = [
   },
 ];
 
+const reelVideos = [
+  { id: "WljPsLeMNlE", title: "Walking Unaided in Just 4 Days", label: "Bilateral knee replacement" },
+  { id: "1YTNmRZ_4Yw", title: "Walking After Total Knee Replacement", label: "Post-operative recovery" },
+  { id: "Tua5D73sR2M", title: "From Surgery to Walking Again", label: "Orthopaedic success story" },
+  { id: "9t8mePWtHF4", title: "From Two Sticks to Walking Solo", label: "Partial knee replacement" },
+  { id: "9t8mePWtHF4", title: "From Two Sticks to Walking Solo", label: "Partial knee replacement" },
+];
+
+const featuredVideos = [
+  { id: "QvRs0D8q5b0", title: "From New Zealand to India", label: "A smooth hip replacement journey" },
+  { id: "_kPkG7N8P8Q", title: "Donna Rameka's Journey", label: "Transforming lives" },
+  { id: "5Fx241Jcal0", title: "Robotic Hip Replacement in India", label: "Patient success story" },
+  { id: "LBR_UQ9s0TY", title: "An Absolute Pain-Free Recovery", label: "Hip replacement testimonial" },
+  { id: "LBR_UQ9s0TY", title: "An Absolute Pain-Free Recovery", label: "Hip replacement testimonial" },
+];
+
 const PlayIcon = () => (
   <svg viewBox="0 0 48 48" aria-hidden="true">
     <circle cx="24" cy="24" r="22" fill="none" stroke="currentColor" strokeWidth="1.5" />
@@ -60,7 +77,35 @@ const PlayIcon = () => (
   </svg>
 );
 
+const YouTubeCard = ({ video, onPlay }) => (
+  <div className="story-media-card">
+    <button type="button" className="story-media-card__trigger" onClick={() => onPlay(video)} aria-label={`Play ${video.title}`}>
+      <img src={`https://i.ytimg.com/vi/${video.id}/hqdefault.jpg`} alt="" loading="lazy" />
+      <span className="story-media-card__overlay"><PlayIcon /><strong>{video.title}</strong><small>{video.label}</small></span>
+    </button>
+  </div>
+);
+
 const PatientStoriesPage = () => {
+  const [activeVideo, setActiveVideo] = useState(null);
+
+  useEffect(() => {
+    if (!activeVideo) return undefined;
+
+    const previousOverflow = document.body.style.overflow;
+    const handleEscape = event => {
+      if (event.key === "Escape") setActiveVideo(null);
+    };
+
+    document.body.style.overflow = "hidden";
+    window.addEventListener("keydown", handleEscape);
+
+    return () => {
+      document.body.style.overflow = previousOverflow;
+      window.removeEventListener("keydown", handleEscape);
+    };
+  }, [activeVideo]);
+
   useLayoutEffect(() => {
 
     gsap.registerPlugin(ScrollTrigger);
@@ -199,14 +244,17 @@ const PatientStoriesPage = () => {
 
   return (
     <Layout>
-    <section className="stories-hero">
-      <div className="container">
-        <h1>Stories Of<br /><span>Movement Restored</span></h1>
-        <div className="stories-hero__image">
-          <img src={heroImage} alt="Hip replacement implant illustration" />
-        </div>
-      </div>
-    </section>
+     <section className="inside-banner">
+           <div className="container">
+             <h1>
+               Expert Care For <br />
+               <span>Knee Replacement</span>
+             </h1>
+             <div className="banner-sec">
+               <img src={patientstory} alt="Hip replacement and restored movement" />
+             </div>
+           </div>
+         </section>
 
       <section className="why-choose-mudit-khanna stories-testimonials">
           <div className="container">
@@ -278,12 +326,9 @@ const PatientStoriesPage = () => {
           slidesPerView={3}
           breakpoints={{ 0: { slidesPerView: 1.45, spaceBetween: 12 }, 640: { slidesPerView: 2.2 }, 1000: { slidesPerView: 3 } }}
         >
-          {patientStories.map(story => (
-            <SwiperSlide key={`reel-${story.id}`}>
-              <button type="button" className="story-media-card" aria-label={`Play ${story.name}'s recovery reel`}>
-                <img src={story.image} alt="" />
-                <span className="story-media-card__overlay"><PlayIcon /><strong>{story.name}</strong><small>Recovery story</small></span>
-              </button>
+          {reelVideos.map(video => (
+            <SwiperSlide key={`reel-${video.id}`}>
+              <YouTubeCard video={video} onPlay={setActiveVideo} />
             </SwiperSlide>
           ))}
         </Swiper>
@@ -300,30 +345,48 @@ const PatientStoriesPage = () => {
           loop
           navigation
           slideToClickedSlide
-          spaceBetween={34}
-          slidesPerView={1.72}
-          breakpoints={{ 0: { slidesPerView: 1.18, spaceBetween: 10 }, 700: { slidesPerView: 1.45 }, 1100: { slidesPerView: 1.72 } }}
+          spaceBetween={24}
+          slidesPerView={2}
+          breakpoints={{
+            0: { slidesPerView: 1.08, spaceBetween: 10 },
+            700: { slidesPerView: 1.5, spaceBetween: 18 },
+            1100: { slidesPerView: 2, spaceBetween: 24 },
+          }}
         >
-          {patientStories.map(story => (
-            <SwiperSlide key={`video-${story.id}`}>
-              <button type="button" className="story-media-card" aria-label={`Play ${story.name}'s patient video`}>
-                <img src={story.image} alt="" />
-                <span className="story-media-card__overlay"><PlayIcon /><strong>{story.name}</strong><small>Patient experience</small></span>
-              </button>
+          {featuredVideos.map(video => (
+            <SwiperSlide key={`video-${video.id}`}>
+              <YouTubeCard video={video} onPlay={setActiveVideo} />
             </SwiperSlide>
           ))}
         </Swiper>
       </div>
     </section>
+
+    {activeVideo && (
+      <div className="video-modal" role="dialog" aria-modal="true" aria-labelledby="video-modal-title">
+        <button type="button" className="video-modal__backdrop" aria-label="Close video" onClick={() => setActiveVideo(null)} />
+        <div className="video-modal__dialog">
+          <div className="video-modal__header">
+            <h2 id="video-modal-title">{activeVideo.title}</h2>
+            <button type="button" className="video-modal__close" onClick={() => setActiveVideo(null)} aria-label="Close video">×</button>
+          </div>
+          <div className="video-modal__player">
+            <iframe
+              src={`https://www.youtube-nocookie.com/embed/${activeVideo.id}?autoplay=1&rel=0`}
+              title={activeVideo.title}
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+              allowFullScreen
+            />
+          </div>
+        </div>
+      </div>
+    )}
     </Layout>
   );
 };
 
 export default PatientStoriesPage;
 
-export const Head = () => (
-  <>
-    <title>Patient Stories | Dr. Mudit Khanna</title>
-    <meta name="description" content="Hear from patients whose mobility and confidence were restored with personalised orthopaedic care from Dr. Mudit Khanna." />
-  </>
+export const Head = ({ location }) => (
+  <SEO title="Patient Stories | Dr. Mudit Khanna" description="Hear from patients whose mobility and confidence were restored with personalised orthopaedic care from Dr. Mudit Khanna." pathname={location.pathname} />
 );

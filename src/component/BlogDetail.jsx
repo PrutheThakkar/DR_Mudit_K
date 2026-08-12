@@ -44,11 +44,7 @@ const BlogDetail = ({ blog }) => {
             </section>
           ))}
 
-          <aside className="blog-detail__note">
-            <h2>Still unsure what your knee needs?</h2>
-            <p>A careful clinical assessment can help you understand the cause of your symptoms and compare the options appropriate for you.</p>
-            <Link to="/contact/" className="btn btn--primary">Book An Appointment</Link>
-          </aside>
+        
         </div>
       </article>
 

@@ -1,12 +1,11 @@
 .home-hero {
+  position: relative;
   height: 100vh;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: url(../images/home-banner.png);
-  background-repeat: no-repeat;
-  background-size: 40%;
-  background-position: center;
+  background: transparent;
+  overflow: hidden;
 }
 @media (max-width: 1580px) {
   .home-hero {
@@ -23,13 +22,13 @@
     height: 600px;
   }
 }
-@media (max-width: 500px) {
-  .home-hero {
-    background-size: 60%;
-    background-position: center 33%;
-  }
-}
+.home-hero__metal-wrap{position:absolute;z-index:0;top:50%;left:50%;width:min(40vw,780px);aspect-ratio:1546/1218;transform:translate(-50%,-50%);pointer-events:none}
+.home-hero__metal{position:relative;z-index:1;display:block;width:100%;height:100%;object-fit:contain;will-change:transform;filter:drop-shadow(0 20px 50px rgba(0,0,0,.35))}
+.home-hero__metal-glow{position:absolute;z-index:0;inset:14%;border-radius:50%;background:rgba(40,117,245,.16);filter:blur(65px)}
+@media(max-width:500px){.home-hero__metal-wrap{top:33%;width:60%}}
 .home-hero .container {
+  position: relative;
+  z-index: 2;
   height: 100%;
   width: 100%;
   display: flex;
@@ -59,6 +58,8 @@
   bottom: 5%;
   width: 90%;
 }
+.home-hero .home-hero__bottom .left > *, .home-hero .home-hero__bottom .right .home-hero__button{will-change:transform,opacity,filter}
+@media(prefers-reduced-motion:reduce){.home-hero__bottom .left > *,.home-hero__bottom .right .home-hero__button{will-change:auto}}
 @media (max-width: 850px) {
   .home-hero .home-hero__bottom {
     flex-direction: column;

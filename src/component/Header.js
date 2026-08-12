@@ -12,40 +12,35 @@ const expertiseItems = [
   {
     title: "Hip Replacement",
     image: hipImage,
-    link: "/expertise/",
+    link: "/hip-replacement/",
   },
   {
     title: "Knee Replacement",
     image: kneeImage,
-    link: "/expertise/",
+    link: "/knee-replacement/",
   },
   {
     title: "Regenerative Treatment",
     image: regenerativeImage,
-    link: "/expertise/",
+    link: "/regenerative-treatment/",
   },
   {
     title: "Pain Management",
     image: painManagementImage,
-    link: "/expertise/",
+    link: "/pain-management/",
   },
 ];
 
 const Header = () => {
   const [menuOpen, setMenuOpen] = useState(false);
   const [activeDropdown, setActiveDropdown] = useState(null);
+  const [isScrolled, setIsScrolled] = useState(false);
 
   const expertiseOpen = activeDropdown === "expertise";
 
   const isDesktop = () =>
     typeof window !== "undefined" &&
     window.matchMedia("(min-width: 1101px)").matches;
-
-  const toggleDropdown = () => {
-    setActiveDropdown(current =>
-      current === "expertise" ? null : "expertise"
-    );
-  };
 
   const closeMenu = () => {
     setMenuOpen(false);
@@ -93,8 +88,19 @@ const Header = () => {
     };
   }, [menuOpen]);
 
+  useEffect(() => {
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 20);
+    };
+
+    handleScroll();
+    window.addEventListener("scroll", handleScroll, { passive: true });
+
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
   return (
-    <header className="header">
+    <header className={`header ${isScrolled ? "is-scrolled" : ""}`}>
       <div className="container header__container">
         <Link
           to="/"
@@ -141,12 +147,19 @@ const Header = () => {
             onMouseEnter={openDesktopDropdown}
             onMouseLeave={closeDesktopDropdown}
           >
-            <button
-              type="button"
+            <Link
+              to={expertiseItems[0].link}
               className="nav__link nav__link--button"
+              getProps={({ location }) =>
+                expertiseItems.some(item =>
+                  location.pathname.startsWith(item.link)
+                )
+                  ? { className: "nav__link nav__link--button is-active" }
+                  : {}
+              }
               aria-expanded={expertiseOpen}
               aria-controls="expertise-mega-menu"
-              onClick={toggleDropdown}
+              onClick={closeMenu}
             >
               <span>Expertise</span>
 
@@ -164,7 +177,7 @@ const Header = () => {
                   strokeLinejoin="round"
                 />
               </svg>
-            </button>
+            </Link>
 
             <div
               id="expertise-mega-menu"

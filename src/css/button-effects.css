@@ -1,0 +1,97 @@
+@property --button-border-angle {
+  syntax: "<angle>";
+  initial-value: 0deg;
+  inherits: false;
+}
+
+@keyframes rotate-button-border {
+  to {
+    --button-border-angle: 360deg;
+  }
+}
+
+:where(
+  .btn,
+  .details-btn,
+  .faq-section__button,
+  .contact-form__submit,
+  .contact-location-content__button
+) {
+  position: relative;
+  isolation: isolate;
+  border: 3px solid transparent !important;
+  border-radius: 18px !important;
+  background:
+    linear-gradient(#151515, #151515) padding-box,
+    conic-gradient(
+        from var(--button-border-angle),
+        #0d3c91 0deg,
+        #2875f5 72deg,
+        #a7cdff 108deg,
+        #2875f5 150deg,
+        #0d3c91 230deg,
+        #2875f5 310deg,
+        #0d3c91 360deg
+      )
+      border-box !important;
+  color: #ffffff !important;
+  box-shadow:
+    0 0 10px rgba(40, 117, 245, 0.45),
+    0 8px 18px rgba(0, 0, 0, 0.3) !important;
+  animation: rotate-button-border 2.8s linear infinite;
+  transition:
+    color 0.3s ease,
+    box-shadow 0.3s ease,
+    transform 0.3s ease;
+}
+
+:where(
+  .btn,
+  .details-btn,
+  .faq-section__button,
+  .contact-form__submit,
+  .contact-location-content__button
+):hover {
+  background:
+    linear-gradient(#191919, #191919) padding-box,
+    conic-gradient(
+        from var(--button-border-angle),
+        #155fd6 0deg,
+        #4c91ff 72deg,
+        #ffffff 108deg,
+        #4c91ff 150deg,
+        #155fd6 230deg,
+        #4c91ff 310deg,
+        #155fd6 360deg
+      )
+      border-box !important;
+  color: #ffffff !important;
+  box-shadow:
+    0 0 14px rgba(40, 117, 245, 0.78),
+    0 0 30px rgba(40, 117, 245, 0.35),
+    0 10px 22px rgba(0, 0, 0, 0.32) !important;
+  transform: translateY(-2px);
+}
+
+:where(
+  .btn,
+  .details-btn,
+  .faq-section__button,
+  .contact-form__submit,
+  .contact-location-content__button
+):focus-visible {
+  outline: 3px solid rgba(76, 145, 255, 0.42);
+  outline-offset: 4px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :where(
+    .btn,
+    .details-btn,
+    .faq-section__button,
+    .contact-form__submit,
+    .contact-location-content__button
+  ) {
+    animation: none;
+  }
+}

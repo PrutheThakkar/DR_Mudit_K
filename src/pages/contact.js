@@ -1,7 +1,7 @@
-import React from "react";
-import { Link } from "gatsby";
+import React, { useState } from "react";
 
 import Layout from "../component/Layout";
+import SEO from "../component/SEO";
 
 import contactHeroImage from "../images/contact-banner.webp";
 
@@ -140,6 +140,68 @@ const LinkedInIcon = () => (
 );
 
 const ContactPage = () => {
+  const [formStatus, setFormStatus] = useState("idle");
+  const [formMessage, setFormMessage] = useState("");
+
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+
+    const form = event.currentTarget;
+    const formData = new FormData(form);
+
+    // Silently accept bot submissions caught by the honeypot.
+    if (formData.get("bot-field")) {
+      form.reset();
+      setFormStatus("success");
+      setFormMessage("Thank you. Your appointment request has been received.");
+      return;
+    }
+
+    const webhookUrl = process.env.GATSBY_N8N_CONTACT_WEBHOOK_URL;
+
+    if (!webhookUrl) {
+      setFormStatus("error");
+      setFormMessage("The appointment form is not configured yet. Please call or email us.");
+      return;
+    }
+
+    setFormStatus("submitting");
+    setFormMessage("");
+
+    const payload = {
+      firstName: formData.get("firstName"),
+      lastName: formData.get("lastName"),
+      phone: formData.get("phone"),
+      email: formData.get("email"),
+      message: formData.get("message"),
+      source: "website-contact-form",
+      pageUrl: window.location.href,
+      submittedAt: new Date().toISOString(),
+    };
+
+    try {
+      const response = await fetch(webhookUrl, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(payload),
+      });
+
+      if (!response.ok) {
+        throw new Error(`n8n webhook returned ${response.status}`);
+      }
+
+      form.reset();
+      setFormStatus("success");
+      setFormMessage("Thank you. Your appointment request has been received.");
+    } catch (error) {
+      console.error("Contact form submission failed:", error);
+      setFormStatus("error");
+      setFormMessage("We could not send your request. Please try again or contact us directly.");
+    }
+  };
+
   return (
     <Layout>
      
@@ -245,16 +307,8 @@ const ContactPage = () => {
                 <form
                   className="contact-form"
                   name="contact"
-                  method="POST"
-                  data-netlify="true"
-                  netlify-honeypot="bot-field"
+                  onSubmit={handleSubmit}
                 >
-                  <input
-                    type="hidden"
-                    name="form-name"
-                    value="contact"
-                  />
-
                   <p className="contact-form__honeypot">
                     <label>
                       Do not fill this field:
@@ -344,74 +398,29 @@ const ContactPage = () => {
                   <button
                     type="submit"
                     className="contact-form__submit"
+                    disabled={formStatus === "submitting"}
                   >
-                    Book An Appointment
+                    {formStatus === "submitting"
+                      ? "Sending..."
+                      : "Book An Appointment"}
                   </button>
+
+                  {formMessage && (
+                    <p
+                      className={`contact-form__status contact-form__status--${formStatus}`}
+                      role={formStatus === "error" ? "alert" : "status"}
+                      aria-live="polite"
+                    >
+                      {formMessage}
+                    </p>
+                  )}
                 </form>
               </div>
             </div>
           </div>
         </section>
 
-        {/* Contact and location section */}
-        <section className="contact-location-section">
-          <div className="container">
-            <div className="contact-location-grid">
-              <div className="contact-location-content">
-                <h2>Contact &amp; Location</h2>
-
-                <p>
-                  Have a question or need to plan a visit?
-                  <br />
-                  Personalised care, led directly by the doctor.
-                </p>
-
-                <Link
-                  to="/book-an-appointment/"
-                  className="contact-location-content__button"
-                >
-                  Book An Appointment
-                </Link>
-              </div>
-
-              <div className="contact-map">
-                <iframe
-                  title="Wockhardt Hospital Mumbai Central location"
-                  src="https://www.google.com/maps?q=Wockhardt%20Hospitals%20Mumbai%20Central&output=embed"
-                  loading="lazy"
-                  referrerPolicy="no-referrer-when-downgrade"
-                  allowFullScreen
-                />
-              </div>
-            </div>
-
-            <div className="contact-location-bar">
-              <div className="contact-location-bar__item">
-                <LocationIcon />
-
-                <span>
-                  Wockhardt Hospital – Mumbai Central
-                </span>
-              </div>
-
-              <div className="contact-location-bar__item">
-                <EmailIcon />
-
-                <a href="mailto:contact@drmuditkhanna.com">
-                  contact@drmuditkhanna.com
-                </a>
-              </div>
-
-              <div className="contact-location-bar__item">
-                <PhoneIcon />
-
-                <a href="tel:+918657790513">
-                  +91 86577 90513
-                </a>
-              </div>
-            </div>
-          </div>
-        </section>
+       
      
     </Layout>
   );
@@ -419,17 +428,6 @@ const ContactPage = () => {
 
 export default ContactPage;
 
-export const Head = () => (
-  <>
-    <html lang="en" />
-
-    <title>
-      Contact Dr. Mudit Khanna | Book an Appointment
-    </title>
-
-    <meta
-      name="description"
-      content="Contact Dr. Mudit Khanna for personalised hip and knee treatment, second opinions and orthopaedic consultations in Mumbai."
-    />
-  </>
+export const Head = ({ location }) => (
+  <SEO title="Contact Dr. Mudit Khanna | Book an Appointment" description="Contact Dr. Mudit Khanna for personalised hip and knee treatment, second opinions and orthopaedic consultations in Mumbai." pathname={location.pathname} />
 );

@@ -6,13 +6,46 @@ $header-text: rgba(255, 255, 255, 0.8);
 $header-border: rgba(255, 255, 255, 0.1);
 
 .header {
-  position: absolute;
+  position: fixed;
   top: 0;
   left: 0;
   z-index: 1000;
   width: 100%;
   padding: 28px 0;
   background: transparent;
+  transition:
+    padding 0.3s ease,
+    background-color 0.3s ease,
+    box-shadow 0.3s ease,
+    backdrop-filter 0.3s ease;
+
+  &.is-scrolled {
+    padding: 15px 0;
+    background: rgba(20, 20, 20, 0.94);
+    box-shadow:
+      0 8px 28px rgba(0, 0, 0, 0.28),
+      0 12px 30px rgba($header-blue, 0.18);
+    backdrop-filter: blur(14px);
+
+    &::after {
+      position: absolute;
+      right: 0;
+      bottom: 0;
+      left: 0;
+      height: 2px;
+      background: linear-gradient(
+        90deg,
+        transparent 0%,
+        rgba($header-blue-light, 0.25) 20%,
+        rgba($header-blue, 0.9) 50%,
+        rgba($header-blue-light, 0.25) 80%,
+        transparent 100%
+      );
+      box-shadow: 0 5px 16px rgba($header-blue, 0.48);
+      content: "";
+      pointer-events: none;
+    }
+  }
 
   &__container {
     position: relative;
@@ -221,17 +254,20 @@ $header-border: rgba(255, 255, 255, 0.1);
       transition: width 0.25s ease;
     }
 
-    &:hover,
+    &:hover {
+      color: #ffffff;
+
+      &::after {
+        width: 100%;
+      }
+    }
+
     &.is-active {
       color: #ffffff;
 
       &::before {
         opacity: 1;
         transform: translateY(-50%) scale(1);
-      }
-
-      &::after {
-        width: 100%;
       }
     }
 
@@ -440,6 +476,10 @@ $header-border: rgba(255, 255, 255, 0.1);
   .header {
     padding: 20px 0;
 
+    &.is-scrolled {
+      padding: 12px 0;
+    }
+
     &__container {
       display: flex;
       width: min(100% - 40px, 1000px);
@@ -628,6 +668,10 @@ $header-border: rgba(255, 255, 255, 0.1);
 @media (max-width: 576px) {
   .header {
     padding: 16px 0;
+
+    &.is-scrolled {
+      padding: 10px 0;
+    }
 
     &__container {
       width: calc(100% - 30px);

@@ -3,6 +3,7 @@ import { Link } from "gatsby";
 
 import Layout from "../component/Layout";
 import FaqSection from "../component/faq";
+import SEO from "../component/SEO";
 
 import { Swiper, SwiperSlide } from "swiper/react";
 import {
@@ -19,6 +20,7 @@ import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 
 import aboutImage from "../images/dmk_homepage_about.webp";
+import homeMetalImage from "../images/home-banner.png";
 import whyChooseImage from "../images/why-choose-dr-mudit.webp";
 import expimg1 from "../images/hip-replacement.webp";
 import expimg2 from "../images/knee-replacement.webp";
@@ -239,6 +241,10 @@ const IndexPage = () => {
   return (
     <Layout>
       <section className="home-hero">
+        <div className="home-hero__metal-wrap" aria-hidden="true">
+          <div className="home-hero__metal-glow" />
+          <img className="home-hero__metal" src={homeMetalImage} alt="" />
+        </div>
         <div className="container home-hero__container">
           <div className="home-hero__heading-wrap">
             <h1 className="home-hero__title">
@@ -270,12 +276,12 @@ const IndexPage = () => {
             </div>
 
             <div className="right">
-              <Link
+              {/* <Link
                 to="/contact/"
                 className="btn btn--primary home-hero__button"
               >
                 Book An Appointment
-              </Link>
+              </Link> */}
 
               <a
                 href="https://wa.me/918657790513"
@@ -511,17 +517,6 @@ const IndexPage = () => {
 
 export default IndexPage;
 
-export const Head = () => (
-  <>
-    <html lang="en" />
-
-    <title>
-      Dr. Mudit Khanna | Robotic Hip &amp; Knee Surgeon
-    </title>
-
-    <meta
-      name="description"
-      content="Dr. Mudit Khanna is a robotic hip and knee replacement surgeon."
-    />
-  </>
+export const Head = ({ location }) => (
+  <SEO title="Dr. Mudit Khanna | Robotic Hip & Knee Surgeon" description="Dr. Mudit Khanna is a robotic hip and knee replacement surgeon providing personalised orthopaedic care in Mumbai." pathname={location.pathname} />
 );

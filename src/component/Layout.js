@@ -1,6 +1,9 @@
 import React from "react";
 import Header from "./Header";
 import Footer from "./Footer";
+import PageTitleAnimation from "./PageTitleAnimation";
+import SiteScrollReveal from "./SiteScrollReveal";
+import InteractiveMotion from "./InteractiveMotion";
 
 import "../css/header.css";
 import "../css/common.css";
@@ -10,6 +13,7 @@ import "../css/inside.css";
 import "../css/contact.css";
 import "../css/insights.css";
 import "../css/patient-stories.css";
+import "../css/button-effects.css";
 
 const Layout = ({ children }) => {
   return (
@@ -19,11 +23,14 @@ const Layout = ({ children }) => {
       </a>
 
       <Header />
+      <InteractiveMotion />
 
       <main id="main-content" className="site-main">
+        <PageTitleAnimation />
+        <SiteScrollReveal />
         {children}
       </main>
-       <Footer />
+      <Footer />
     </>
   );
 };

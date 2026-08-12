@@ -3,8 +3,10 @@
  */
 module.exports = {
   siteMetadata: {
-    title: `dr-mudit-khanna`,
-    siteUrl: `https://www.yourdomain.tld`,
+    title: `Dr. Mudit Khanna`,
+    description: `Personalised robotic hip and knee replacement care from orthopaedic surgeon Dr. Mudit Khanna in Mumbai.`,
+    siteUrl: `https://www.drmuditkhanna.com`,
+    author: `Dr. Mudit Khanna`,
   },
   plugins: [],
 }

@@ -4,6 +4,7 @@ import { Link } from "gatsby";
 import Layout from "../component/Layout";
 import InsideBanner from "../component/inside-banner";
 import PersonalApproach from "../component/PersonalApproach";
+import SEO from "../component/SEO";
 
 import { Swiper, SwiperSlide } from "swiper/react";
 import {
@@ -148,14 +149,18 @@ const Aboutpage = () => {
 
     if (!svgDocument) return;
 
-    const mapPoints = Array.from(
-      svgDocument.querySelectorAll(".map-point")
+    const mapBackground = svgDocument.querySelector("rect");
+    const mapLabels = Array.from(
+      svgDocument.querySelectorAll('path[fill="white"]')
+    );
+    const mapRoutes = Array.from(
+      svgDocument.querySelectorAll('path[stroke="#2171FF"]')
+    );
+    const mapPoints = Array.from(svgDocument.querySelectorAll("circle")).map(
+      circle => circle.closest("g") || circle
     );
 
-    if (!mapPoints.length) {
-      console.warn(
-        'No map points found. Add class="map-point" to the SVG circles.'
-      );
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
       return;
     }
 
@@ -163,70 +168,78 @@ const Aboutpage = () => {
     mapTimelineRef.current?.kill();
     mapScrollTriggerRef.current?.kill();
 
+    mapRoutes.forEach((route, index) => {
+      const routeLength = route.getTotalLength();
+
+      gsap.set(route, {
+        strokeDasharray: routeLength,
+        // The final route is drawn from Singapore back towards India.
+        strokeDashoffset: index === 2 ? -routeLength : routeLength,
+      });
+    });
+
     gsap.set(mapPoints, {
       opacity: 0,
-      scale: 0.3,
-      y: -25,
-      transformOrigin: "50% 50%",
-      transformBox: "fill-box",
     });
+    gsap.set(mapLabels, { opacity: 0, y: 10 });
 
     const timeline = gsap.timeline({
       paused: true,
-      repeat: -1,
-      repeatDelay: 0.3,
+      defaults: { ease: "power3.out" },
     });
 
-    mapPoints.forEach((point) => {
+    const journeySteps = [
+      { route: mapRoutes[0], point: mapPoints[1], label: mapLabels[1] },
+      { route: mapRoutes[3], point: mapPoints[2], label: mapLabels[2] },
+      { route: mapRoutes[1], point: mapPoints[3], label: mapLabels[3] },
+      { route: mapRoutes[2], point: mapPoints[4], label: mapLabels[4] },
+    ];
+
+    timeline
+      .fromTo(
+        mapBackground,
+        { opacity: 0 },
+        { opacity: 1, duration: 0.55 },
+      )
+      .fromTo(
+        mapLabels[0],
+        { opacity: 0, y: 10 },
+        { opacity: 1, y: 0, duration: 0.28 },
+        "-=0.22"
+      )
+      .to(
+        mapPoints[0],
+        { opacity: 1, duration: 0.22, ease: "power2.out" },
+        "<"
+      );
+
+    journeySteps.forEach(({ route, point, label }) => {
       timeline
-        .fromTo(
-          point,
-          {
-            opacity: 0,
-            scale: 0.3,
-            y: -30,
-          },
-          {
-            opacity: 1,
-            scale: 1.5,
-            y: 0,
-            duration: 0.55,
-            ease: "bounce.out",
-          }
-        )
+        .to(route, {
+          strokeDashoffset: 0,
+          duration: 0.62,
+          ease: "power1.inOut",
+        })
         .to(point, {
-          scale: 1,
-          duration: 0.2,
+          opacity: 1,
+          duration: 0.22,
           ease: "power2.out",
         })
-        .to(point, {
-          scale: 1.25,
-          duration: 0.25,
-          ease: "power2.inOut",
-          yoyo: true,
-          repeat: 1,
-        })
-        .to(point, {
-          opacity: 0,
-          scale: 0.5,
-          duration: 0.3,
-          delay: 0.5,
-          ease: "power2.in",
-        });
+        .fromTo(
+          label,
+          { opacity: 0, y: 8 },
+          { opacity: 1, y: 0, duration: 0.26, ease: "power2.out" },
+          "<0.03"
+        );
     });
 
     mapTimelineRef.current = timeline;
 
     mapScrollTriggerRef.current = ScrollTrigger.create({
       trigger: mapObject,
-      start: "top 80%",
-      end: "bottom 20%",
-
-      onEnter: () => timeline.play(),
-      onEnterBack: () => timeline.play(),
-
-      onLeave: () => timeline.pause(),
-      onLeaveBack: () => timeline.pause(),
+      start: "top 78%",
+      animation: timeline,
+      once: true,
     });
 
     ScrollTrigger.refresh();
@@ -552,17 +565,6 @@ const Aboutpage = () => {
 
 export default Aboutpage;
 
-export const Head = () => (
-  <>
-    <html lang="en" />
-
-    <title>
-      Dr. Mudit Khanna | Robotic Hip &amp; Knee Surgeon
-    </title>
-
-    <meta
-      name="description"
-      content="Dr. Mudit Khanna is a robotic hip and knee replacement surgeon."
-    />
-  </>
+export const Head = ({ location }) => (
+  <SEO title="About Dr. Mudit Khanna | Orthopaedic Surgeon" description="Learn about Dr. Mudit Khanna's experience and personalised approach to robotic hip and knee replacement care in Mumbai." pathname={location.pathname} />
 );
