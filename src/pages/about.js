@@ -15,7 +15,7 @@ import "swiper/css/pagination";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 
-import aboutImagemap from "https://drmuditk.studiosentientdemo.com/wp-content/uploads/2026/08/global-map.svg";
+import aboutImagemap from "../images/global-map.svg";
 import hipImage from "../images/expertise-1.webp";
 import kneeImage from "../images/expertise-2.webp";
 import roboticImage from "../images/expertise-3.webp";
