@@ -296,7 +296,7 @@ const Aboutpage = ({ data }) => {
             className="global-map-object"
             aria-label="Global surgical training locations"
           >
-            <img src={aboutImagemap} alt="Global surgical training locations" />
+            
           </object>
           <ul>
             <li>
