@@ -240,7 +240,34 @@ const Aboutpage = ({ data }) => {
   };
 
   useEffect(() => {
+    const mapObject = mapObjectRef.current;
+    if (!mapObject) return undefined;
+
+    let retryTimer;
+    let retryCount = 0;
+
+    const initializeMap = () => {
+      if (mapObject.contentDocument?.documentElement) {
+        handleMapLoad();
+        return;
+      }
+
+      // A cached SVG can finish loading before React hydration on production.
+      // Retry until the embedded SVG document becomes available.
+      if (retryCount < 20) {
+        retryCount += 1;
+        retryTimer = window.setTimeout(initializeMap, 100);
+      }
+    };
+
+    mapObject.addEventListener("load", initializeMap);
+    window.addEventListener("pageshow", initializeMap);
+    initializeMap();
+
     return () => {
+      window.clearTimeout(retryTimer);
+      mapObject.removeEventListener("load", initializeMap);
+      window.removeEventListener("pageshow", initializeMap);
       mapTimelineRef.current?.kill();
       mapScrollTriggerRef.current?.kill();
     };
@@ -268,7 +295,6 @@ const Aboutpage = ({ data }) => {
             type="image/svg+xml"
             className="global-map-object"
             aria-label="Global surgical training locations"
-            onLoad={handleMapLoad}
           >
             <img src={aboutImagemap} alt="Global surgical training locations" />
           </object>
