@@ -233,9 +233,16 @@
 }
 
 .blog-detail__header h1 {
-  font-size: clamp(2rem, 4vw, 4.25rem);
+   font-size: clamp(1.875rem, -0.8989rem + 3.2491vw, 3rem);
   line-height: 1.14;
+  color: #2171FF;
+  margin-bottom: 20px;
 }
+ @media (max-width:1365px) {
+  .blog-detail__header h1 {
+  font-size: clamp(1.5rem, 1.1793rem + 0.6689vw, 1.75rem);
+ }
+ }
 
 .blog-detail__header > p {
   max-width: 850px;
@@ -258,8 +265,37 @@
 }
 
 .blog-detail__body {
-  max-width: 920px;
+  max-width: 70%;
   padding-top: clamp(65px, 7vw, 105px);
+}
+
+.blog-detail__wordpress-content h2,
+.blog-detail__wordpress-content h3 {
+  margin: 0 0 22px;
+  line-height: 1.25;
+}
+
+.blog-detail__wordpress-content p {
+  margin-bottom: 24px;
+  color: #bbb;
+}
+
+.blog-detail__wordpress-content ul,
+.blog-detail__wordpress-content ol {
+  display: grid;
+  gap: 15px;
+  margin: 0 0 32px;
+  padding-left: 28px;
+}
+
+.blog-detail__wordpress-content li {
+  color: #bbb;
+  line-height: 1.7;
+}
+
+.blog-detail__wordpress-content img {
+  max-width: 100%;
+  height: auto;
 }
 
 .blog-detail__section {
@@ -320,7 +356,7 @@
 }
 
 .insights-grid--related {
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-columns: repeat(3, minmax(0, 1fr));
 }
 
 @media (max-width: 900px) {

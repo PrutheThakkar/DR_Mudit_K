@@ -25,6 +25,9 @@ const faqItems = [
   },
 ];
 
+const normalizeWordPressHtml = html =>
+  html ? html.replace(/\bclassName=/g, "class=") : "";
+
 const AccordionIcon = ({ isOpen }) => {
   return (
     <span
@@ -52,7 +55,7 @@ const AccordionIcon = ({ isOpen }) => {
   );
 };
 
-const FaqSection = () => {
+const FaqSection = ({ items = faqItems, title, description }) => {
   const [activeIndex, setActiveIndex] = useState(0);
 
   const handleAccordionClick = (index) => {
@@ -66,14 +69,20 @@ const FaqSection = () => {
       <div className="faq-section__container">
         <div className="faq-section__content">
           <div className="faq-section__intro">
-            <h2 className="faq-section__title">
-              What patients want to know
-            </h2>
+            {title ? (
+              <div dangerouslySetInnerHTML={{ __html: normalizeWordPressHtml(title) }} />
+            ) : (
+              <h2 className="faq-section__title">What patients want to know</h2>
+            )}
 
-            <p className="faq-section__description">
-              Clear, honest answers to the questions patients most commonly
-              ask before, during, and after treatment.
-            </p>
+            {description ? (
+              <div dangerouslySetInnerHTML={{ __html: normalizeWordPressHtml(description) }} />
+            ) : (
+              <p className="faq-section__description">
+                Clear, honest answers to the questions patients most commonly
+                ask before, during, and after treatment.
+              </p>
+            )}
 
             <Link to="/contact/" className="faq-section__button">
               Contact Now
@@ -81,7 +90,7 @@ const FaqSection = () => {
           </div>
 
           <div className="faq-accordion">
-            {faqItems.map((item, index) => {
+            {items.map((item, index) => {
               const isOpen = activeIndex === index;
               const contentId = `faq-content-${index}`;
               const buttonId = `faq-button-${index}`;

@@ -332,6 +332,9 @@
           }
         }
         &.bottom{
+          .bottom-para{
+            text-align: right;
+          }
           .left{
             display: flex;
             flex-direction: column;

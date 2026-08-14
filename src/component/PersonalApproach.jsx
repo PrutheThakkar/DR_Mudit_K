@@ -19,7 +19,8 @@ const points = [
 
 
 
-const PersonalApproach = () => {
+const PersonalApproach = ({ image, imageAlt, items }) => {
+  const approachPoints = items?.filter(Boolean)?.length ? items.filter(Boolean) : points;
 
 
   const sectionRef = useRef(null);
@@ -183,9 +184,9 @@ const PersonalApproach = () => {
           <div className="personal-image">
             <img
 
-              src={doctorImage}
+              src={image || doctorImage}
 
-              alt="Personal approach"
+              alt={imageAlt || "Personal approach"}
 
             />
           </div>
@@ -199,7 +200,7 @@ const PersonalApproach = () => {
             <div className="approach-list">
               <div className="timeline-line"></div>
               {
-                points.map(
+                approachPoints.map(
                   (item, index) => (
 
 

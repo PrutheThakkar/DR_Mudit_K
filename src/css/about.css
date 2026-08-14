@@ -185,6 +185,7 @@
   -o-object-fit: cover;
      object-fit: cover;
   animation: expertiseImageFade 0.5s ease;
+  object-position: 92%;
 }
 @media (max-width: 1366px) {
   .expertise-tabs-section .expertise-content .content-image img {
@@ -816,3 +817,14 @@
 .expertise-listing__image img{width:100%;height:100%;display:block;object-fit:cover}
 @media(max-width:991px){.expertise-listing-hero{padding-top:64px}.expertise-listing-hero__image{aspect-ratio:16/7}.expertise-listing__item{grid-template-columns:minmax(230px,.8fr) minmax(0,1.2fr);gap:36px}}
 @media(max-width:767px){.expertise-listing-hero{padding:48px 0 56px}.expertise-listing-hero h1{font-size:clamp(36px,11vw,52px)}.expertise-listing-hero__image{aspect-ratio:4/3}.expertise-listing{padding-bottom:72px}.expertise-listing__item{grid-template-columns:1fr;gap:24px;margin-bottom:72px}.expertise-listing__content h2{margin-bottom:14px;font-size:clamp(28px,8vw,38px)}.expertise-listing__content p{font-size:15px;line-height:1.65}.expertise-listing__image{aspect-ratio:16/10}}
+
+
+.dr-mudit .left .img-wrap{
+width: 100%;
+height: 510px;
+}
+.dr-mudit .left .img-wrap img{
+width: 100%;
+height: 100%;
+object-fit: cover;
+}

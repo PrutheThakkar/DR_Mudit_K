@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import { Link } from "gatsby";
+import { graphql, Link } from "gatsby";
 
 import Layout from "../component/Layout";
 import InsideBanner from "../component/inside-banner";
@@ -7,12 +7,7 @@ import PersonalApproach from "../component/PersonalApproach";
 import SEO from "../component/SEO";
 
 import { Swiper, SwiperSlide } from "swiper/react";
-import {
-  Mousewheel,
-  Navigation,
-  Pagination,
-  Autoplay,
-} from "swiper/modules";
+import { Navigation, Pagination, Autoplay } from "swiper/modules";
 
 import "swiper/css";
 import "swiper/css/navigation";
@@ -25,7 +20,6 @@ import hipImage from "../images/expertise-1.webp";
 import kneeImage from "../images/expertise-2.webp";
 import roboticImage from "../images/expertise-3.webp";
 import revisionImage from "../images/expertise-4.webp";
-
 
 import logo1 from "../images/logo-1.svg";
 import logo2 from "../images/logo-2.svg";
@@ -74,61 +68,65 @@ const expertiseData = [
   },
 ];
 
-
 const membershipData = [
   {
     logo: logo1,
-    title:
-      "Member of Royal College\nof Surgeons of Edinburgh, UK",
+    title: "Member of Royal College\nof Surgeons of Edinburgh, UK",
   },
 
   {
     logo: logo2,
-    title:
-      "Member of Indian \nOrthopaedic Society, UK",
+    title: "Member of Indian \nOrthopaedic Society, UK",
   },
 
   {
     logo: logo3,
-    title:
-      "Member of Indian\nOrthopaedic Association",
+    title: "Member of Indian\nOrthopaedic Association",
   },
 
   {
     logo: logo4,
-    title:
-      "Member of Indian Society \nof Hip and Knee Surgeons, India",
+    title: "Member of Indian Society \nof Hip and Knee Surgeons, India",
   },
 
   {
     logo: logo5,
-    title:
-      "Member of Indian \nArthroscopy Society, India",
+    title: "Member of Indian \nArthroscopy Society, India",
   },
 
   {
     logo: logo6,
-    title:
-      "Member of Bombay \nOrthopaedic Society",
+    title: "Member of Bombay \nOrthopaedic Society",
   },
 
   {
     logo: logo7,
-    title:
-      "Member of \nCAOS International, UK",
+    title: "Member of \nCAOS International, UK",
   },
   {
     logo: logo8,
-    title:
-      "Member of Indian\nArthroplasty Association, India",
+    title: "Member of Indian\nArthroplasty Association, India",
   },
-
 ];
 
+const normalizeWordPressHtml = (html) =>
+  html ? html.replace(/\bclassName=/g, "class=") : "";
 
-
-const Aboutpage = () => {
-  const [activeIndex, setActiveIndex] = useState(0);
+const Aboutpage = ({ data }) => {
+  const wordpressPage = data?.allWpPage?.nodes?.[0];
+  const aboutPage = wordpressPage?.aboutPageNew;
+  const banner = wordpressPage?.commonBannerImage;
+  const expertiseItems = aboutPage?.expertiseList?.length
+    ? aboutPage.expertiseList.map((item, index) => ({
+        title: item.expertiseRightTitle,
+        description: item.expertisePara,
+        image:
+          item.expertiseImage?.node?.sourceUrl || expertiseData[index]?.image,
+        imageAlt:
+          item.expertiseImage?.node?.altText || item.expertiseRightTitle,
+        link: expertiseData[index]?.link || "/contact/",
+      }))
+    : expertiseData;
   const [activeTab, setActiveTab] = useState(0);
 
   const expertiseSwiperRef = useRef(null);
@@ -137,7 +135,7 @@ const Aboutpage = () => {
   const mapTimelineRef = useRef(null);
   const mapScrollTriggerRef = useRef(null);
 
-  const activeContent = expertiseData[activeTab];
+  const activeContent = expertiseItems[activeTab] || expertiseItems[0];
 
   const handleMapLoad = () => {
     if (typeof window === "undefined") return;
@@ -157,7 +155,7 @@ const Aboutpage = () => {
       svgDocument.querySelectorAll('path[stroke="#2171FF"]')
     );
     const mapPoints = Array.from(svgDocument.querySelectorAll("circle")).map(
-      circle => circle.closest("g") || circle
+      (circle) => circle.closest("g") || circle
     );
 
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
@@ -196,11 +194,7 @@ const Aboutpage = () => {
     ];
 
     timeline
-      .fromTo(
-        mapBackground,
-        { opacity: 0 },
-        { opacity: 1, duration: 0.55 },
-      )
+      .fromTo(mapBackground, { opacity: 0 }, { opacity: 1, duration: 0.55 })
       .fromTo(
         mapLabels[0],
         { opacity: 0, y: 10 },
@@ -260,7 +254,10 @@ const Aboutpage = () => {
 
   return (
     <Layout>
-      <InsideBanner />
+      <InsideBanner
+        image={banner?.bannerImage?.node?.sourceUrl}
+        imageAlt={banner?.bannerImage?.node?.altText}
+      />
 
       <section className="map-section">
         <div className="container">
@@ -273,10 +270,7 @@ const Aboutpage = () => {
             aria-label="Global surgical training locations"
             onLoad={handleMapLoad}
           >
-            <img
-              src={aboutImagemap}
-              alt="Global surgical training locations"
-            />
+            <img src={aboutImagemap} alt="Global surgical training locations" />
           </object>
           <ul>
             <li>
@@ -311,11 +305,19 @@ const Aboutpage = () => {
         <div className="container">
           <div className="expertise-layout">
             <div className="expertise-tabs">
-              <h2>Area Of Expertise</h2>
+              {aboutPage?.areaOfExpertiseTitle && (
+                <div
+                  dangerouslySetInnerHTML={{
+                    __html: normalizeWordPressHtml(
+                      aboutPage.areaOfExpertiseTitle
+                    ),
+                  }}
+                />
+              )}
 
               {/* Desktop vertical tabs */}
               <div className="tabs-list tabs-list--desktop">
-                {expertiseData.map((item, index) => (
+                {expertiseItems.map((item, index) => (
                   <button
                     type="button"
                     key={item.title}
@@ -349,12 +351,13 @@ const Aboutpage = () => {
                     setActiveTab(swiper.activeIndex);
                   }}
                 >
-                  {expertiseData.map((item, index) => (
+                  {expertiseItems.map((item, index) => (
                     <SwiperSlide key={item.title}>
                       <button
                         type="button"
-                        className={`expertise-slide-button ${activeTab === index ? "active" : ""
-                          }`}
+                        className={`expertise-slide-button ${
+                          activeTab === index ? "active" : ""
+                        }`}
                         onClick={() => {
                           setActiveTab(index);
                           expertiseSwiperRef.current?.slideTo(index);
@@ -383,7 +386,7 @@ const Aboutpage = () => {
               <div className="content-image">
                 <img
                   src={activeContent.image}
-                  alt={activeContent.title}
+                  alt={activeContent.imageAlt || activeContent.title}
                 />
               </div>
             </div>
@@ -391,180 +394,162 @@ const Aboutpage = () => {
         </div>
       </section>
 
-
       <section className="membership-section">
-
-
         <div className="container">
-
-
-          <h2 className="membership-title">
-            Memberships & Affiliations
-          </h2>
-
-
+          <h2 className="membership-title">Memberships & Affiliations</h2>
 
           <Swiper
-
             className="membership-slider"
-
-            modules={[
-              Pagination,
-              Autoplay
-            ]}
-
+            modules={[Pagination, Autoplay]}
             slidesPerView={3}
-
             spaceBetween={50}
-
             loop={true}
-
             speed={800}
-
-
             autoplay={{
-
               delay: 3000,
 
-              disableOnInteraction: false
-
+              disableOnInteraction: false,
             }}
-
-
             pagination={{
-
-              clickable: true
-
+              clickable: true,
             }}
-
-
             breakpoints={{
-
               0: {
                 slidesPerView: 1,
-                spaceBetween: 20
+                spaceBetween: 20,
               },
-
 
               768: {
                 slidesPerView: 2,
-                spaceBetween: 30
+                spaceBetween: 30,
               },
-
 
               1200: {
                 slidesPerView: 3,
-                spaceBetween: 50
-              }
-
-
+                spaceBetween: 50,
+              },
             }}
-
-
           >
-
-
-            {
-
-              membershipData.map((item, index) => (
-
-
-                <SwiperSlide key={index}>
-
-
-                  <div className="membership-card">
-
-
-                    <div className="membership-logo">
-
-                      <img
-
-                        src={item.logo}
-
-                        alt={item.title}
-
-                      />
-
-                    </div>
-
-
-
-                    <div className="membership-content">
-
-
-                      <h3>
-
-                        {item.title.split("\n").map((line, i) => (
-
-                          <React.Fragment key={i}>
-
-                            {line}
-
-                            <br />
-
-                          </React.Fragment>
-
-                        ))}
-
-                      </h3>
-
-
-                    </div>
-
-
+            {membershipData.map((item, index) => (
+              <SwiperSlide key={index}>
+                <div className="membership-card">
+                  <div className="membership-logo">
+                    <img src={item.logo} alt={item.title} />
                   </div>
 
+                  <div className="membership-content">
+                    <h3>
+                      {item.title.split("\n").map((line, i) => (
+                        <React.Fragment key={i}>
+                          {line}
 
-                </SwiperSlide>
-
-
-              ))
-
-            }
-
-
+                          <br />
+                        </React.Fragment>
+                      ))}
+                    </h3>
+                  </div>
+                </div>
+              </SwiperSlide>
+            ))}
           </Swiper>
-
-
         </div>
-
-
       </section>
 
       <section className="map-section awards">
         <div className="container">
           <h2>Awards & Recognition</h2>
 
-          <ul>
-            <li>
-              <h3>Gold Medalist</h3>
-              <p>MCh Orthopaedics,<br />
-                Dundee, UK (Best Presentation)</p>
-            </li>
-            <li>
-              <h3>Gold Medalist</h3>
-              <p>MBBS (Best Overall Student)</p>
-            </li>
-            <li>
-              <h3>Asia Pacific Fellow</h3>
-              <p>Cleveland Clinic, USA</p>
-            </li>
-            <li>
-              <h3>Senior Clinical Fellow</h3>
-              <p>Queen Elizabeth II Hospital, UK</p>
-            </li>
-          </ul>
+          {aboutPage?.awardsList?.length && (
+            <ul>
+              {aboutPage.awardsList.map((item, index) => (
+                <li key={index}>
+                  <div
+                    dangerouslySetInnerHTML={{
+                      __html: normalizeWordPressHtml(item.title),
+                    }}
+                  />
+                  <div
+                    dangerouslySetInnerHTML={{
+                      __html: normalizeWordPressHtml(item.subtitle),
+                    }}
+                  />
+                </li>
+              ))}
+            </ul>
+          )}
         </div>
       </section>
 
-      <PersonalApproach />
-
+      <PersonalApproach
+        image={aboutPage?.personalImage?.node?.sourceUrl}
+        imageAlt={aboutPage?.personalImage?.node?.altText}
+        items={aboutPage?.personalList?.map((item) => item.personalListTitle)}
+      />
     </Layout>
   );
 };
 
 export default Aboutpage;
 
+export const query = graphql`
+  query AboutPageWordPressData {
+    allWpPage(filter: { databaseId: { eq: 93 } }) {
+      nodes {
+        commonBannerImage {
+          pageTitle
+          bannerImage {
+            node {
+              altText
+              sourceUrl
+            }
+          }
+        }
+        aboutPageNew {
+          aGlobalFoundationTitle
+          aGlobalFoundationImage {
+            node {
+              altText
+              sourceUrl
+            }
+          }
+          aFoundationList {
+            title
+            subtitle
+          }
+          areaOfExpertiseTitle
+          expertiseList {
+            expertiseRightTitle
+            expertisePara
+            expertiseImage {
+              node {
+                altText
+                sourceUrl
+              }
+            }
+          }
+          awardsList {
+            title
+            subtitle
+          }
+          personalImage {
+            node {
+              altText
+              sourceUrl
+            }
+          }
+          personalList {
+            personalListTitle
+          }
+        }
+      }
+    }
+  }
+`;
+
 export const Head = ({ location }) => (
-  <SEO title="About Dr. Mudit Khanna | Orthopaedic Surgeon" description="Learn about Dr. Mudit Khanna's experience and personalised approach to robotic hip and knee replacement care in Mumbai." pathname={location.pathname} />
+  <SEO
+    title="About Dr. Mudit Khanna | Orthopaedic Surgeon"
+    description="Learn about Dr. Mudit Khanna's experience and personalised approach to robotic hip and knee replacement care in Mumbai."
+    pathname={location.pathname}
+  />
 );
