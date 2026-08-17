@@ -7,6 +7,31 @@ const expertiseSlugs = [
   "pain-management",
 ];
 
+// Allow SVG files imported with `?raw` to be rendered inline in the DOM.
+exports.onCreateWebpackConfig = ({ actions, getConfig }) => {
+  const config = getConfig();
+
+  const excludeRawSvgImports = (rules = []) => {
+    rules.forEach((rule) => {
+      if (rule.oneOf) excludeRawSvgImports(rule.oneOf);
+      if (rule.rules) excludeRawSvgImports(rule.rules);
+
+      if (rule.test instanceof RegExp && rule.test.test("map.svg")) {
+        rule.resourceQuery = { not: [/raw/] };
+      }
+    });
+  };
+
+  excludeRawSvgImports(config.module.rules);
+  config.module.rules.push({
+    test: /\.svg$/i,
+    resourceQuery: /raw/,
+    type: "asset/source",
+  });
+
+  actions.replaceWebpackConfig(config);
+};
+
 exports.createPages = async ({ actions, graphql, reporter }) => {
   const expertiseTemplate = path.resolve("src/templates/expertise.js");
   const result = await graphql(`

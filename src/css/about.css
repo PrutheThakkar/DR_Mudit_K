@@ -9,6 +9,12 @@
 .map-section img {
   width: 0 auto;
 }
+.global-map-object,
+.global-map-object svg {
+  display: block;
+  width: 100%;
+  height: auto;
+}
 .map-section ul {
   display: flex;
   flex-wrap: wrap;

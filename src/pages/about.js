@@ -15,7 +15,7 @@ import "swiper/css/pagination";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 
-import aboutImagemap from "../images/global-map.svg";
+import aboutMapSvg from "../images/global-map.svg?raw";
 import hipImage from "../images/expertise-1.webp";
 import kneeImage from "../images/expertise-2.webp";
 import roboticImage from "../images/expertise-3.webp";
@@ -29,6 +29,8 @@ import logo5 from "../images/logo-6.svg";
 import logo6 from "../images/logo-7.svg";
 import logo7 from "../images/logo-8.svg";
 import logo8 from "../images/logo-9.svg";
+
+const WORDPRESS_MAP_SVG_URL = "/api/map-svg";
 
 const expertiseData = [
   {
@@ -128,6 +130,7 @@ const Aboutpage = ({ data }) => {
       }))
     : expertiseData;
   const [activeTab, setActiveTab] = useState(0);
+  const [mapSvg, setMapSvg] = useState(aboutMapSvg);
 
   const expertiseSwiperRef = useRef(null);
 
@@ -137,26 +140,54 @@ const Aboutpage = ({ data }) => {
 
   const activeContent = expertiseItems[activeTab] || expertiseItems[0];
 
+  useEffect(() => {
+    const controller = new AbortController();
+
+    fetch(WORDPRESS_MAP_SVG_URL, { signal: controller.signal })
+      .then((response) => {
+        if (!response.ok) throw new Error("Unable to load WordPress map SVG");
+        return response.text();
+      })
+      .then((svgMarkup) => {
+        if (svgMarkup.includes("<svg")) setMapSvg(svgMarkup);
+      })
+      .catch((error) => {
+        if (error.name !== "AbortError") {
+          // Keep the bundled SVG fallback so the map and animation still work.
+          console.warn("Using bundled map SVG fallback.", error);
+        }
+      });
+
+    return () => controller.abort();
+  }, []);
+
   const handleMapLoad = () => {
     if (typeof window === "undefined") return;
 
     gsap.registerPlugin(ScrollTrigger);
 
     const mapObject = mapObjectRef.current;
-    const svgDocument = mapObject?.contentDocument;
+    if (!mapObject) return;
 
-    if (!svgDocument) return;
-
-    const mapBackground = svgDocument.querySelector("rect");
+    const mapBackground = mapObject.querySelector("rect");
     const mapLabels = Array.from(
-      svgDocument.querySelectorAll('path[fill="white"]')
+      mapObject.querySelectorAll('path[fill="white"]')
     );
     const mapRoutes = Array.from(
-      svgDocument.querySelectorAll('path[stroke="#2171FF"]')
+      mapObject.querySelectorAll('path[stroke="#2171FF"]')
     );
-    const mapPoints = Array.from(svgDocument.querySelectorAll("circle")).map(
+    const mapPoints = Array.from(mapObject.querySelectorAll("circle")).map(
       (circle) => circle.closest("g") || circle
     );
+
+    if (
+      !mapBackground ||
+      mapLabels.length < 5 ||
+      mapRoutes.length < 4 ||
+      mapPoints.length < 5
+    ) {
+      return;
+    }
 
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
       return;
@@ -243,35 +274,21 @@ const Aboutpage = ({ data }) => {
     const mapObject = mapObjectRef.current;
     if (!mapObject) return undefined;
 
-    let retryTimer;
-    let retryCount = 0;
-
     const initializeMap = () => {
-      if (mapObject.contentDocument?.documentElement) {
+      if (mapObject.querySelector("svg")) {
         handleMapLoad();
-        return;
-      }
-
-      // A cached SVG can finish loading before React hydration on production.
-      // Retry until the embedded SVG document becomes available.
-      if (retryCount < 20) {
-        retryCount += 1;
-        retryTimer = window.setTimeout(initializeMap, 100);
       }
     };
 
-    mapObject.addEventListener("load", initializeMap);
     window.addEventListener("pageshow", initializeMap);
     initializeMap();
 
     return () => {
-      window.clearTimeout(retryTimer);
-      mapObject.removeEventListener("load", initializeMap);
       window.removeEventListener("pageshow", initializeMap);
       mapTimelineRef.current?.kill();
       mapScrollTriggerRef.current?.kill();
     };
-  }, []);
+  }, [mapSvg]);
 
   useEffect(() => {
     if (!expertiseSwiperRef.current) return;
@@ -289,15 +306,13 @@ const Aboutpage = ({ data }) => {
       <section className="map-section">
         <div className="container">
           <h2>A Global Foundation of Surgical Excellence</h2>
-          <object
+          <div
             ref={mapObjectRef}
-            data={aboutImagemap}
-            type="image/svg+xml"
             className="global-map-object"
+            role="img"
             aria-label="Global surgical training locations"
-          >
-            
-          </object>
+            dangerouslySetInnerHTML={{ __html: mapSvg }}
+          />
           <ul>
             <li>
               <h3>Asia Pacific Zimmer Fellowship</h3>
