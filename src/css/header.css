@@ -486,6 +486,19 @@
   .expertise-menu-card:hover, .expertise-menu-card.is-active {
     transform: none;
   }
+
+  .expertise-menu-card {
+    display: block;
+  }
+
+  .expertise-menu-card__image {
+    display: none;
+  }
+
+  .expertise-menu-card__content {
+    min-height: 48px;
+    padding: 12px 14px;
+  }
 }
 /* ==========================================================================
    Mobile
@@ -534,18 +547,14 @@
     grid-template-columns: 1fr;
   }
   .expertise-menu-card {
-    display: grid;
-    grid-template-columns: 105px minmax(0, 1fr);
-    align-items: stretch;
+    display: block;
   }
   .expertise-menu-card__image {
-    width: 105px;
-    height: 78px;
-    margin: 6px;
+    display: none;
   }
   .expertise-menu-card__content {
-    min-height: 90px;
-    padding: 14px;
+    min-height: 48px;
+    padding: 12px 14px;
   }
   .expertise-menu-card__content span {
     font-size: 15px;

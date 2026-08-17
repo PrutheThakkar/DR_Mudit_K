@@ -47,3 +47,11 @@
   width: 100%;
   object-fit: cover;
 }
+@media (max-width: 1024px) {
+  .banner-sec { height: clamp(430px, 62vw, 620px); }
+}
+@media (max-width: 767px) {
+  .inside-banner img { margin-top: 28px; }
+  .inside-banner p { margin-top: 28px; text-align: left; }
+  .banner-sec { height: clamp(300px, 90vw, 430px); }
+}

@@ -52,6 +52,11 @@ const IndexPage = ({ data }) => {
 
   useLayoutEffect(() => {
 
+    // The scroll-pinned testimonial treatment is a desktop interaction. On
+    // touch layouts it creates several viewport-heights of empty space and
+    // makes the page appear clipped while the vertical Swiper is pinned.
+    if (window.matchMedia("(max-width: 1100px)").matches) return undefined;
+
     gsap.registerPlugin(ScrollTrigger);
 
 
@@ -301,17 +306,19 @@ const IndexPage = ({ data }) => {
                 <div className={`columns ${start === 0 ? "top" : "bottom"}`} key={start}>
                   {homePage.precisionList.slice(start, start + 2).map((item, offset) => (
                     <div className={offset === 0 ? "left" : "right"} key={`${start}-${offset}`}>
-                      <div dangerouslySetInnerHTML={{ __html: normalizeWordPressHtml(item.title) }} />
-                      <div
-                        className={start === 2 ? "bottom-para" : undefined}
-                        dangerouslySetInnerHTML={{
-                          __html: normalizeWordPressHtml(item.paragraph),
-                        }}
-                      />
                       <div className="img-wrap">
                         <img src={item.image?.node?.sourceUrl} alt={item.image?.node?.altText || ""} />
                       </div>
-                      <Link to={precisionLinks[start + offset]}>Learn More</Link>
+                      <div className="precision-card__content">
+                        <div dangerouslySetInnerHTML={{ __html: normalizeWordPressHtml(item.title) }} />
+                        <div
+                          className={start === 2 ? "bottom-para" : undefined}
+                          dangerouslySetInnerHTML={{
+                            __html: normalizeWordPressHtml(item.paragraph),
+                          }}
+                        />
+                        <Link to={precisionLinks[start + offset]}>Learn More</Link>
+                      </div>
                     </div>
                   ))}
                 </div>
@@ -340,11 +347,15 @@ const IndexPage = ({ data }) => {
             className="why-choose-slider"
             modules={[Navigation, Pagination]}
             direction="vertical"
+            breakpoints={{
+              0: { direction: "horizontal" },
+              1101: { direction: "vertical" },
+            }}
             spaceBetween={24}
             slidesPerView={1}
             loop={false}
             speed={800}
-            allowTouchMove={false}
+            allowTouchMove
             autoplay={false}
             pagination={{
               clickable: true,

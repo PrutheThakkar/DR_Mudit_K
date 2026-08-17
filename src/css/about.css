@@ -823,6 +823,11 @@
 width: 100%;
 height: 510px;
 }
+@media (max-width:767px) {
+  .dr-mudit .left .img-wrap{
+    height: 300px;
+  }
+}
 .dr-mudit .left .img-wrap img{
 width: 100%;
 height: 100%;

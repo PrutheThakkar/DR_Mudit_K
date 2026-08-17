@@ -59,6 +59,18 @@ const Header = () => {
     }
   };
 
+  const handleExpertiseClick = event => {
+    if (!isDesktop()) {
+      event.preventDefault();
+      setActiveDropdown(current =>
+        current === "expertise" ? null : "expertise"
+      );
+      return;
+    }
+
+    closeMenu();
+  };
+
   useEffect(() => {
     if (typeof document === "undefined") return undefined;
 
@@ -159,7 +171,7 @@ const Header = () => {
               }
               aria-expanded={expertiseOpen}
               aria-controls="expertise-mega-menu"
-              onClick={closeMenu}
+              onClick={handleExpertiseClick}
             >
               <span>Expertise</span>
 

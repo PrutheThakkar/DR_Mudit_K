@@ -247,6 +247,11 @@
   display: flex;
   overflow: hidden;
 }
+.precision-every-joint .precision-card__content {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+}
 @media (max-width: 1460px) {
   .precision-every-joint .container .column-wrap .columns {
     flex-direction: column;
@@ -782,6 +787,15 @@
   flex-direction: column;
   justify-content: space-between;
 }
+@media (max-width:767px) {
+  .why-choose-mudit-khanna .why-choose-card__content{
+    background: transparent;
+  }
+  .why-choose-mudit-khanna{
+     background: #1653BF;
+    background: linear-gradient(0deg, rgba(22, 83, 191, 0.77) 0%, rgba(0, 0, 0, 0.29) 54%);
+  }
+}
 .why-choose-mudit-khanna .why-choose-card__content .auto-name {
   text-transform: uppercase;
 }
@@ -817,4 +831,93 @@
   display: flex;
   align-items: flex-end;
   justify-content: flex-end;
+}
+
+/* Mobile and tablet layout corrections. */
+@media (max-width: 1100px) {
+  .home-hero { min-height: 680px; height: min(820px, 100svh); padding-top: 105px; }
+  .home-hero__metal-wrap { top: 43%; width: min(58vw, 500px); }
+  .home-hero .container h1 { margin-bottom: 22vh; }
+  .why-choose-mudit-khanna { width: 100% !important; }
+  .why-choose-slider, .why-choose-slider .swiper-slide { height: auto; }
+  .why-choose-card { min-height: 0; }
+  .why-choose-mudit-khanna .why-choose-card__image { aspect-ratio: 16 / 9; }
+  .why-choose-mudit-khanna .why-choose-card__content { min-height: 260px; padding: 32px 42px; }
+  .why-choose-mudit-khanna .swiper-pagination {
+    top: auto !important; right: auto !important; bottom: 16px !important;
+    left: 50% !important; flex-direction: row; transform: translateX(-50%);
+  }
+}
+
+@media (max-width: 767px) {
+  .home-hero { min-height: 620px; height: 100svh; max-height: 760px; }
+  .home-hero__metal-wrap { top: 40%; width: min(76vw, 350px); }
+  .home-hero .container h1 { margin-bottom: 31vh; }
+  .home-hero .home-hero__bottom { bottom: 28px; width: 100%; }
+  .home-hero .home-hero__bottom .right .home-hero__button {
+    width: auto;
+    min-width: 0;
+    min-height: 42px;
+    align-self: center;
+    padding: 9px 20px;
+    font-size: 14px;
+    white-space: nowrap;
+  }
+  .dr-mudit .container .left .exp { margin: 18px 0 0; padding: 22px 16px; }
+  .dr-mudit .container .left .exp ul { gap: 20px 12px; }
+  .precision-every-joint .container .column-wrap .columns .left,
+  .precision-every-joint .container .column-wrap .columns .right {
+    display: block; width: 100%; min-height: 0; padding: 0;
+  }
+  .precision-every-joint .container .column-wrap .columns .img-wrap {
+    position: relative !important;
+    inset: auto !important;
+    display: block;
+    width: 100% !important;
+    height: clamp(220px, 76vw, 310px) !important;
+    min-height: 220px;
+    aspect-ratio: auto;
+    overflow: hidden;
+    background: #0b1b35;
+  }
+  .precision-every-joint .container .column-wrap .columns .img-wrap img {
+    position: relative;
+    z-index: 1;
+    display: block !important;
+    width: 100% !important;
+    height: 100% !important;
+    max-width: none;
+    object-fit: cover;
+    object-position: center;
+    opacity: 1 !important;
+    visibility: visible !important;
+    transform: none !important;
+  }
+  .precision-every-joint .precision-card__content {
+    position: relative; z-index: 2; padding: 24px 20px 28px;
+    background: linear-gradient(180deg, #111 0%, #10254a 100%);
+  }
+  .precision-every-joint .container .column-wrap .columns p.paragraph,
+  .precision-every-joint .container .column-wrap .columns .bottom-para,
+  .precision-every-joint .container .column-wrap .columns.bottom .left h3,
+  .precision-every-joint .container .column-wrap .columns.bottom .left p,
+  .precision-every-joint .container .column-wrap .columns.bottom .right h3,
+  .precision-every-joint .container .column-wrap .columns.bottom .right p {
+    display: block; width: 100%; padding: 0; text-align: left;
+  }
+  .precision-every-joint .container .column-wrap .columns h3 {
+    padding: 0; margin-bottom: 14px;
+  }
+  .precision-every-joint .container .column-wrap .columns a {
+    display: inline-flex; margin: 20px 0 0;
+  }
+  .why-choose-mudit-khanna .why-choose-card__image { aspect-ratio: 4 / 3; }
+  .why-choose-mudit-khanna .why-choose-card__content {
+    min-height: 250px; padding: 28px 24px 48px;
+  }
+}
+
+@media (max-width: 420px) {
+  .home-hero .container h1 { margin-bottom: 29vh; font-size: clamp(1.8rem, 9.5vw, 2rem); }
+  .home-hero .container h1  .home-hero__title-top { font-size: 1rem; }
 }

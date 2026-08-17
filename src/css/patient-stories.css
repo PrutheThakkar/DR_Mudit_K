@@ -366,7 +366,7 @@ height: 20px;
 @media (max-width: 480px) {
   .stories-testimonials .why-choose-slider,
   .stories-testimonials .why-choose-slider .swiper-slide {
-    min-height: 720px;
+    min-height: 0;
   }
 
   .story-media-slider--reels,

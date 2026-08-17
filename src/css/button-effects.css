@@ -95,3 +95,48 @@
     animation: none;
   }
 }
+
+/* Keep site CTAs compact and consistent on phones. */
+@media (max-width: 767px) {
+  :where(
+    .btn,
+    .details-btn,
+    .faq-section__button,
+    .contact-form__submit,
+    .contact-location-content__button
+  ) {
+    width: fit-content !important;
+    max-width: 100%;
+    min-width: 0 !important;
+    min-height: 42px !important;
+    padding: 9px 20px !important;
+    font-size: 14px !important;
+    line-height: 1.2;
+    white-space: normal;
+  }
+
+  .button-group {
+    align-items: flex-start;
+  }
+}
+
+/* Give internal-page titles clearance below the mobile/tablet header. */
+@media (max-width: 1100px) {
+  :where(
+    .site-main > section:first-of-type:not(.home-hero),
+    .site-main > div:first-child > section:first-of-type,
+    .site-main > article:first-of-type
+  ) h1:first-of-type {
+    padding-top: 38px;
+  }
+}
+
+@media (max-width: 767px) {
+  :where(
+    .site-main > section:first-of-type:not(.home-hero),
+    .site-main > div:first-child > section:first-of-type,
+    .site-main > article:first-of-type
+  ) h1:first-of-type {
+    padding-top: 48px;
+  }
+}
