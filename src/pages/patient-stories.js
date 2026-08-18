@@ -66,14 +66,25 @@ const getYouTubeId = (url = "") =>
     /(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|embed\/|shorts\/))([\w-]{11})/
   )?.[1];
 
+const getInstagramReelId = (url = "") =>
+  url.match(/instagram\.com\/(?:reel|reels|p)\/([\w-]+)/i)?.[1];
+
 const mapWordPressVideos = (items = [], orderField) =>
   [...items]
     .sort((a, b) => Number(a[orderField] || 0) - Number(b[orderField] || 0))
-    .map((item) => ({
-      id: getYouTubeId(item.link?.url),
-      title: item.link?.title || "Patient story",
-      label: "Patient experience",
-    }))
+    .map((item) => {
+      const url = item.link?.url || "";
+      const instagramId = getInstagramReelId(url);
+      const youtubeId = getYouTubeId(url);
+
+      return {
+        id: instagramId || youtubeId,
+        platform: instagramId ? "instagram" : "youtube",
+        title: item.link?.title || "Patient story",
+        label: "Patient experience",
+        url,
+      };
+    })
     .filter((video) => video.id);
 
 const PlayIcon = () => (
@@ -111,6 +122,30 @@ const YouTubeCard = ({ video, onPlay }) => (
     </button>
   </div>
 );
+
+const InstagramCard = ({ video }) => (
+  <div className="story-media-card story-media-card--instagram">
+    <div className="story-media-card__instagram-frame">
+      <iframe
+        src={`https://www.instagram.com/reel/${video.id}/embed/`}
+        title={video.title}
+        loading="lazy"
+        allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share"
+        allowFullScreen
+      />
+    </div>
+    <a href={video.url} target="_blank" rel="noreferrer">
+      View reel on Instagram
+    </a>
+  </div>
+);
+
+const MediaCard = ({ video, onPlay }) =>
+  video.platform === "instagram" ? (
+    <InstagramCard video={video} />
+  ) : (
+    <YouTubeCard video={video} onPlay={onPlay} />
+  );
 
 const PatientStoriesPage = ({ data }) => {
   const [activeVideo, setActiveVideo] = useState(null);
@@ -287,16 +322,16 @@ const PatientStoriesPage = ({ data }) => {
             navigation
             slideToClickedSlide
             spaceBetween={24}
-            slidesPerView={3}
+            slidesPerView="auto"
             breakpoints={{
-              0: { slidesPerView: 1, spaceBetween: 12 },
-              640: { slidesPerView: 2, spaceBetween: 18 },
-              1000: { slidesPerView: 3, spaceBetween: 24 },
+              0: { spaceBetween: 12 },
+              640: { spaceBetween: 18 },
+              1000: { spaceBetween: 24 },
             }}
           >
             {reelVideos.map((video) => (
-              <SwiperSlide key={`reel-${video.id}`}>
-                <YouTubeCard video={video} onPlay={setActiveVideo} />
+              <SwiperSlide key={`reel-${video.platform}-${video.id}`}>
+                <MediaCard video={video} onPlay={setActiveVideo} />
               </SwiperSlide>
             ))}
           </Swiper>
