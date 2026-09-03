@@ -51,6 +51,31 @@ module.exports = {
       resolve: `gatsby-plugin-sitemap`,
       options: {
         excludes: [`/404/`, `/404.html`],
+        serialize: ({ path }) => {
+          const isHome = path === `/`;
+          const isInsightsIndex = path === `/insights/`;
+          const isArticle = path.startsWith(`/insights/`) && !isInsightsIndex;
+          const isCoreService = [
+            `/hip-replacement/`,
+            `/knee-replacement/`,
+            `/regenerative-treatment/`,
+            `/pain-management/`,
+          ].includes(path);
+
+          return {
+            url: path,
+            changefreq: isHome || isInsightsIndex ? `weekly` : `monthly`,
+            priority: isHome
+              ? 1
+              : isCoreService
+                ? 0.9
+                : isInsightsIndex
+                  ? 0.8
+                  : isArticle
+                    ? 0.7
+                    : 0.6,
+          };
+        },
       },
     },
     {
