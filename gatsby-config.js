@@ -44,7 +44,7 @@ module.exports = {
         background_color: `#ffffff`,
         theme_color: `#0b2f4a`,
         display: `minimal-ui`,
-        icon: `src/images/icon.png`,
+        icon: `src/images/mudit-icon.png`,
       },
     },
     {
