@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Link } from "gatsby";
 
 import logo from "../images/DMK_Logo.svg";
@@ -35,6 +35,7 @@ const Header = () => {
   const [menuOpen, setMenuOpen] = useState(false);
   const [activeDropdown, setActiveDropdown] = useState(null);
   const [isScrolled, setIsScrolled] = useState(false);
+  const dropdownCloseTimer = useRef(null);
 
   const expertiseOpen = activeDropdown === "expertise";
 
@@ -49,15 +50,24 @@ const Header = () => {
 
   const openDesktopDropdown = () => {
     if (isDesktop()) {
+      window.clearTimeout(dropdownCloseTimer.current);
       setActiveDropdown("expertise");
     }
   };
 
   const closeDesktopDropdown = () => {
     if (isDesktop()) {
-      setActiveDropdown(null);
+      window.clearTimeout(dropdownCloseTimer.current);
+      dropdownCloseTimer.current = window.setTimeout(() => {
+        setActiveDropdown(null);
+      }, 180);
     }
   };
+
+  useEffect(
+    () => () => window.clearTimeout(dropdownCloseTimer.current),
+    []
+  );
 
   const handleExpertiseClick = event => {
     if (!isDesktop()) {

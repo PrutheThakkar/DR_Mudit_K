@@ -1,5 +1,6 @@
 import React from "react";
 import { graphql, useStaticQuery } from "gatsby";
+import { getStaticSeo } from "../data/seo";
 
 const SEO = ({ title, description, pathname = "/", image, article = false, noIndex = false }) => {
   const { site } = useStaticQuery(graphql`
@@ -15,19 +16,37 @@ const SEO = ({ title, description, pathname = "/", image, article = false, noInd
     }
   `);
   const metadata = site.siteMetadata;
-  const seoTitle = title || metadata.title;
-  const seoDescription = description || metadata.description;
+  const staticSeo = getStaticSeo(pathname);
+  const seoTitle = staticSeo?.title || title || metadata.title;
+  const seoDescription =
+    staticSeo?.description || description || metadata.description;
+  const schemaType = staticSeo?.schemaType || (article ? "Article" : "Physician");
   const canonicalUrl = new URL(pathname, metadata.siteUrl).toString();
   const imageUrl = image ? new URL(image, metadata.siteUrl).toString() : null;
-  const structuredData = {
+  const physicianData = {
     "@context": "https://schema.org",
-    "@type": "Physician",
+    "@type": schemaType,
     name: metadata.author,
     url: metadata.siteUrl,
-    medicalSpecialty: "Orthopedic",
-    address: { "@type": "PostalAddress", addressLocality: "Mumbai", addressCountry: "IN" },
-    telephone: "+91 86577 90513",
-    email: "contact@drmuditkhanna.com",
+    ...(schemaType === "Physician" && {
+      medicalSpecialty: "Orthopedic",
+      address: {
+        "@type": "PostalAddress",
+        addressLocality: "Mumbai",
+        addressCountry: "IN",
+      },
+      telephone: "+91 86577 90513",
+      email: "contact@drmuditkhanna.com",
+    }),
+    ...(schemaType !== "Physician" && {
+      headline: seoTitle,
+      description: seoDescription,
+      url: canonicalUrl,
+      author: {
+        "@type": "Physician",
+        name: metadata.author,
+      },
+    }),
   };
 
   return (
@@ -35,10 +54,16 @@ const SEO = ({ title, description, pathname = "/", image, article = false, noInd
       <html lang="en" />
       <title>{seoTitle}</title>
       <meta name="description" content={seoDescription} />
+      {staticSeo?.keywords && (
+        <meta name="keywords" content={staticSeo.keywords} />
+      )}
       <meta name="author" content={metadata.author} />
       <meta name="robots" content={noIndex ? "noindex, nofollow" : "index, follow"} />
       <link rel="canonical" href={canonicalUrl} />
-      <meta property="og:type" content={article ? "article" : "website"} />
+      <meta
+        property="og:type"
+        content={schemaType === "Article" ? "article" : "website"}
+      />
       <meta property="og:title" content={seoTitle} />
       <meta property="og:description" content={seoDescription} />
       <meta property="og:url" content={canonicalUrl} />
@@ -49,7 +74,7 @@ const SEO = ({ title, description, pathname = "/", image, article = false, noInd
       <meta name="twitter:title" content={seoTitle} />
       <meta name="twitter:description" content={seoDescription} />
       {imageUrl && <meta name="twitter:image" content={imageUrl} />}
-      <script type="application/ld+json">{JSON.stringify(structuredData)}</script>
+      <script type="application/ld+json">{JSON.stringify(physicianData)}</script>
     </>
   );
 };

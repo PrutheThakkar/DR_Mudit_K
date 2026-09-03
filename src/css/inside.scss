@@ -1,5 +1,11 @@
 .inside-banner{
     margin-top: 60px;
+    @media (max-width:1100px) {
+        margin-top: 42px;
+    }
+    @media (max-width:767px) {
+        margin-top: 28px;
+    }
     .container{
        
     }

@@ -1,5 +1,15 @@
 .inside-banner {
-  /* margin-top: 60px; */
+  margin-top: 60px;
+}
+@media (max-width: 1100px) {
+  .inside-banner {
+    margin-top: 42px;
+  }
+}
+@media (max-width: 767px) {
+  .inside-banner {
+    margin-top: 28px;
+  }
 }
 .inside-banner h1 {
   font-size: clamp(2.5rem, -1.1986rem + 4.3321vw, 4rem);

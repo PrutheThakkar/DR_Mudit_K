@@ -4,6 +4,7 @@ import Footer from "./Footer";
 import PageTitleAnimation from "./PageTitleAnimation";
 import SiteScrollReveal from "./SiteScrollReveal";
 import InteractiveMotion from "./InteractiveMotion";
+import SitePreloader from "./SitePreloader";
 
 import "../css/header.css";
 import "../css/common.css";
@@ -14,10 +15,12 @@ import "../css/contact.css";
 import "../css/insights.css";
 import "../css/patient-stories.css";
 import "../css/button-effects.css";
+import "../css/preloader.css";
 
 const Layout = ({ children }) => {
   return (
     <>
+      <SitePreloader />
       <a className="skip-to-content" href="#main-content">
         Skip to content
       </a>

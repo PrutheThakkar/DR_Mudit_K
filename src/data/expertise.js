@@ -1,7 +1,7 @@
 import hipBanner from "../images/hip-replacement.webp";
 import kneeBanner from "../images/exp-banner.webp";
-import regenerativeBanner from "../images/regenerative-treatment.webp";
-import painManagementBanner from "../images/pain-management.webp";
+import regenerativeBanner from "../images/regenerative-treatment-banner-v2.png";
+import painManagementBanner from "../images/pain-management-banner-v2.png";
 
 import hipReplacementImg from "../images/expertise-1.webp";
 import kneeOsteoarthritisImg from "../images/knee_osteoarthritis.webp";

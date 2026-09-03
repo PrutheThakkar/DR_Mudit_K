@@ -46,9 +46,80 @@ const SiteScrollReveal = () => {
           });
         });
 
+        // Treatment rows get a coordinated card reveal: the copy and image
+        // approach from opposite sides, followed by the image settling in.
+        gsap.utils
+          .toArray(".expertise-listing__item")
+          .forEach((item, index) => {
+            const content = item.querySelectorAll(
+              ".expertise-listing__content > *"
+            );
+            const imageFrame = item.querySelector(
+              ".expertise-listing__image"
+            );
+            const image = imageFrame?.querySelector("img");
+            const direction = index % 2 === 0 ? 1 : -1;
+            const timeline = gsap.timeline({
+              scrollTrigger: {
+                trigger: item,
+                start,
+                once: true,
+              },
+            });
+
+            timeline.from(item, {
+              y: distance * 0.45,
+              autoAlpha: 0,
+              duration: duration * 0.7,
+              ease: "power2.out",
+            });
+
+            if (content.length) {
+              timeline.from(
+                content,
+                {
+                  x: -direction * distance,
+                  autoAlpha: 0,
+                  duration,
+                  stagger,
+                  ease: "power3.out",
+                },
+                0.08
+              );
+            }
+
+            if (imageFrame) {
+              timeline.from(
+                imageFrame,
+                {
+                  x: direction * distance,
+                  clipPath:
+                    direction > 0
+                      ? "inset(0 0 0 18%)"
+                      : "inset(0 18% 0 0)",
+                  autoAlpha: 0,
+                  duration: duration + 0.15,
+                  ease: "power3.out",
+                },
+                0
+              );
+            }
+
+            if (image) {
+              timeline.from(
+                image,
+                {
+                  scale: 1.09,
+                  duration: duration + 0.35,
+                  ease: "power2.out",
+                },
+                0
+              );
+            }
+          });
+
         const revealGroups = [
           ".precision-every-joint .columns",
-          ".expertise-listing__item",
           ".insights-grid > *",
           ".insights-faq__item",
           ".faq-list > *",
@@ -173,7 +244,7 @@ const SiteScrollReveal = () => {
 
         gsap.utils
           .toArray(
-            ".site-main section:not(.home-hero) .inside-banner img, .site-main .expertise-listing__image img, .expertise-content .content-image img, .personal-grid img"
+            ".site-main section:not(.home-hero) .inside-banner img, .expertise-content .content-image img, .personal-grid img"
           )
           .forEach((image) => {
             gsap.from(image, {
