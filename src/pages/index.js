@@ -27,7 +27,6 @@ import expimg4 from "../images/pain-management.webp";
 const normalizeWordPressHtml = html =>
   html ? html.replace(/\bclassName=/g, "class=") : "";
 
-
 const IndexPage = ({ data }) => {
   const wordpressPage = data?.allWpPage?.edges?.[0]?.node;
   const homePage = wordpressPage?.homePage;
@@ -165,30 +164,18 @@ const IndexPage = ({ data }) => {
             totalSlides - 1,
             0
           );
-
         },
-
-
       });
-
-
       ScrollTrigger.refresh();
-
-
     }, 500);
 
 
     return () => {
-
       clearTimeout(timer);
-
       ScrollTrigger.getAll().forEach(
         trigger => trigger.kill()
       );
-
     };
-
-
   }, []);
 
   return (
@@ -230,13 +217,6 @@ const IndexPage = ({ data }) => {
             )}
 
             <div className="right">
-              {/* <Link
-                to="/contact/"
-                className="btn btn--primary home-hero__button"
-              >
-                Book An Appointment
-              </Link> */}
-
               <a
                 href="https://wa.me/918657790513"
                 className="btn btn--outline home-hero__button"
