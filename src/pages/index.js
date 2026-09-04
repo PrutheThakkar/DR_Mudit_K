@@ -297,7 +297,12 @@ const IndexPage = ({ data }) => {
                             __html: normalizeWordPressHtml(item.paragraph),
                           }}
                         />
-                        <Link to={precisionLinks[start + offset]}>Learn More</Link>
+                        <Link
+                          to={precisionLinks[start + offset]}
+                          className="btn btn--primary precision-card__button"
+                        >
+                          Learn More
+                        </Link>
                       </div>
                     </div>
                   ))}
