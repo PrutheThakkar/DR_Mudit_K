@@ -10,7 +10,9 @@ const SitePreloader = () => {
   );
 
   useEffect(() => {
-    if (initialLoadComplete) return undefined;
+    if (initialLoadComplete) {
+      return undefined;
+    }
 
     const startedAt = window.performance.now();
     let finishTimer;
@@ -24,7 +26,9 @@ const SitePreloader = () => {
         setStatus("complete");
         initialLoadComplete = true;
         document.body.classList.remove("is-preloading");
-        removeTimer = window.setTimeout(() => setStatus("hidden"), 650);
+        removeTimer = window.setTimeout(() => {
+          setStatus("hidden");
+        }, 650);
       }, remaining);
     };
 

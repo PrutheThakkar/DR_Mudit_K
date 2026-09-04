@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { graphql } from "gatsby";
 
 import Layout from "../component/Layout";
@@ -75,7 +75,51 @@ const formatWordPressContent = content => {
   );
 };
 
+const getVideoEmbedUrl = url => {
+  if (!url) return null;
+
+  const youtubeId = url.match(
+    /(?:youtu\.be\/|youtube\.com\/(?:watch\?(?:.*&)?v=|embed\/|shorts\/))([\w-]{11})/
+  )?.[1];
+  if (youtubeId) {
+    return `https://www.youtube-nocookie.com/embed/${youtubeId}?autoplay=1&rel=0`;
+  }
+
+  const vimeoId = url.match(/vimeo\.com\/(?:video\/)?(\d+)/)?.[1];
+  if (vimeoId) return `https://player.vimeo.com/video/${vimeoId}?autoplay=1`;
+
+  return url;
+};
+
+const PlayIcon = () => (
+  <svg viewBox="0 0 48 48" aria-hidden="true">
+    <circle cx="24" cy="24" r="22" fill="none" stroke="currentColor" strokeWidth="1.5" />
+    <path d="m20 16 13 8-13 8Z" fill="currentColor" />
+  </svg>
+);
+
+const hipReplacementVideos = [
+  {
+    matches: title => /direct anterior|\bdaa\b/i.test(title),
+    url: "https://youtu.be/fAd07j6H5FI",
+  },
+  {
+    matches: title => /robotic.*hip replacement/i.test(title),
+    url: "https://youtu.be/LNOl-hr_qAc",
+  },
+  {
+    matches: title => /avascular necrosis|\bavn\b/i.test(title),
+    url: "https://youtu.be/75DRfelqOZE",
+  },
+];
+
+const getExpertiseVideoUrl = (slug, title = "") => {
+  if (slug !== "hip-replacement") return null;
+  return hipReplacementVideos.find(video => video.matches(title))?.url || null;
+};
+
 const ExpertiseTemplate = ({ data, pageContext }) => {
+  const [activeVideo, setActiveVideo] = useState(null);
   const fallback = getExpertisePage(pageContext.slug);
   const wordpressExpertise = data?.allWpExpertiseAll?.nodes?.[0];
   const bannerTitle = wordpressExpertise?.commonBannerImage?.pageTitle;
@@ -93,8 +137,32 @@ const ExpertiseTemplate = ({ data, pageContext }) => {
         title: item.title,
         description: item.para,
         image: item.image?.node?.sourceUrl || fallback?.items?.[index]?.image,
+        videoUrl:
+          getExpertiseVideoUrl(pageContext.slug, item.title) ||
+          fallback?.items?.[index]?.videoUrl,
       }))
-    : fallback?.items || [];
+    : (fallback?.items || []).map(item => ({
+        ...item,
+        videoUrl:
+          getExpertiseVideoUrl(pageContext.slug, item.title) || item.videoUrl,
+      }));
+
+  useEffect(() => {
+    if (!activeVideo) return undefined;
+
+    const previousOverflow = document.body.style.overflow;
+    const handleEscape = event => {
+      if (event.key === "Escape") setActiveVideo(null);
+    };
+
+    document.body.style.overflow = "hidden";
+    window.addEventListener("keydown", handleEscape);
+
+    return () => {
+      document.body.style.overflow = previousOverflow;
+      window.removeEventListener("keydown", handleEscape);
+    };
+  }, [activeVideo]);
 
   return (
     <Layout>
@@ -133,15 +201,71 @@ const ExpertiseTemplate = ({ data, pageContext }) => {
                     <h2>{item.title}</h2>
                     <p>{item.description}</p>
                   </div>
-                  <div className="expertise-listing__image">
-                    <img src={item.image} alt={item.title} loading="lazy" />
-                  </div>
+                  {item.videoUrl ? (
+                    <button
+                      type="button"
+                      className="expertise-listing__image expertise-listing__video-trigger"
+                      onClick={() =>
+                        setActiveVideo({
+                          title: item.title,
+                          src: getVideoEmbedUrl(item.videoUrl),
+                        })
+                      }
+                      aria-label={`Play video: ${item.title}`}
+                    >
+                      <img src={item.image} alt="" loading="lazy" />
+                      <span className="expertise-listing__play">
+                        <PlayIcon />
+                      </span>
+                    </button>
+                  ) : (
+                    <div className="expertise-listing__image">
+                      <img src={item.image} alt={item.title} loading="lazy" />
+                    </div>
+                  )}
                 </article>
               ))
             )}
           </div>
         </section>
       </div>
+
+      {activeVideo && (
+        <div
+          className="video-modal"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="expertise-video-title"
+        >
+          <button
+            type="button"
+            className="video-modal__backdrop"
+            aria-label="Close video"
+            onClick={() => setActiveVideo(null)}
+          />
+          <div className="video-modal__dialog">
+            <div className="video-modal__header">
+              <h2 id="expertise-video-title">{activeVideo.title}</h2>
+              <button
+                type="button"
+                className="video-modal__close"
+                onClick={() => setActiveVideo(null)}
+                aria-label="Close video"
+              >
+                ×
+              </button>
+            </div>
+            <div className="video-modal__player">
+              <iframe
+                src={activeVideo.src}
+                title={activeVideo.title}
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                allowFullScreen
+              />
+            </div>
+          </div>
+        </div>
+      )}
     </Layout>
   );
 };

@@ -29,6 +29,8 @@ const Layout = ({ children }) => {
       <InteractiveMotion />
 
       <main id="main-content" className="site-main">
+        {/* Start entrance animations behind the preloader so the page is
+            already settled by the time the loader reveals it. */}
         <PageTitleAnimation />
         <SiteScrollReveal />
         {children}

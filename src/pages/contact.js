@@ -362,7 +362,7 @@ const ContactPage = ({ data }) => {
                 >
                   {formStatus === "submitting"
                     ? "Sending..."
-                    : "Book An Appointment"}
+                    : "Submit The Form"}
                 </button>
 
                 {formMessage && (

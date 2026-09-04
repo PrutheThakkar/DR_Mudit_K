@@ -30,7 +30,7 @@ const Footer = () => {
               to="/contact/"
               className="btn btn--primary site-footer__appointment"
             >
-              Book An Appointment
+              Request A Consultation
             </Link>
 
             <div className="site-footer__navigation">

@@ -61,6 +61,38 @@ const patientStories = [
   },
 ];
 
+const youtubeChannelVideos = [
+  ["zPBPPxJ2IZM", "Walking Without a Walker in Just 2 Days | Bilateral Knee Replacement Patient Review"],
+  ["nGQlaSJ83N4", "Bikini Incision Direct Anterior Hip Replacement | Walk Same Day with No Visible Scar!"],
+  ["fAd07j6H5FI", "Why Direct Anterior (DA) Total Hip Replacement is the Future of Joint Surgery"],
+  ["LNOl-hr_qAc", "No Muscle Cuts & Quicker Recovery: What’s New in Hip Replacement Surgery?"],
+  ["UE0GDtZtwOY", "Life After Hip Replacement: When Can You Drive, Swim & Hit the Gym?"],
+  ["JqdWGZDV1-M", "Faster Recovery After Hip Replacement? What You Need to Know About DAA"],
+  ["75DRfelqOZE", "What is Avascular Necrosis (AVN) of the Hip? | Causes & Treatment | Dr. Mudit Khanna"],
+  ["9tl6srnRDNY", "Hip Replacement Recovery: What Activities Are Safe? | Dr. Mudit Khanna"],
+  ["B4TCn85BtXo", "Why Is DAA So Famous? | The Truth About Modern Hip Replacement Surgery | Dr. Mudit Khanna"],
+  ["Ypf57ZwKjqE", "What is a TRUE Minimally Invasive Hip Replacement? (Direct Anterior Approach)"],
+  ["EDEz8Y8UyTI", "Single vs Dual Mobility Hip Replacement Explained (Hindi) | Dr. Mudit Khanna"],
+  ["QvRs0D8q5b0", "From New Zealand to India: A Smooth Hip Replacement Journey"],
+  ["_kPkG7N8P8Q", "Transforming Lives: Donna Rameka's Journey with Dr. Mudit Khanna"],
+  ["WljPsLeMNlE", "Walking Unaided in Just 4 Days | Bilateral Knee Replacement Recovery Story"],
+  ["5Fx241Jcal0", "Robotic Hip Replacement in India | Patient Success Story | Dr. Mudit Khanna"],
+  ["LBR_UQ9s0TY", "Absolute Pain-Free: NZ Patient Hip Replacement Testimonial | Dr. Mudit Khanna, Mumbai"],
+  ["9t8mePWtHF4", "From Two Sticks to Walking Solo: Steve's Partial Knee Replacement Success"],
+  ["Tua5D73sR2M", "From Surgery to Walking Again | Life-Changing Orthopaedic Success Story"],
+  ["1YTNmRZ_4Yw", "Postoperative Video: Patient After Total Knee Replacement"],
+  ["nBXB429gpEg", "Pre-operative Video Before Knee Replacement"],
+  ["lw2Ngj7WAZw", "Postoperative Recovery Two Weeks After Total Knee Replacement"],
+  ["nFA2JYpFZwo", "Knee Replacement Patient Recovery"],
+  ["fmTLeThFKEU", "Total Knee Replacement at Wockhardt Hospital, Goa"],
+].map(([id, title]) => ({
+  id,
+  platform: "youtube",
+  title,
+  label: "Dr. Mudit Khanna",
+  url: `https://www.youtube.com/watch?v=${id}`,
+}));
+
 const getYouTubeId = (url = "") =>
   url.match(
     /(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|embed\/|shorts\/))([\w-]{11})/
@@ -86,6 +118,12 @@ const mapWordPressVideos = (items = [], orderField) =>
       };
     })
     .filter((video) => video.id);
+
+const mergeUniqueVideos = (...groups) => {
+  const videosById = new Map();
+  groups.flat().forEach(video => videosById.set(video.id, video));
+  return Array.from(videosById.values());
+};
 
 const PlayIcon = () => (
   <svg viewBox="0 0 48 48" aria-hidden="true">
@@ -156,9 +194,9 @@ const PatientStoriesPage = ({ data }) => {
     patientStoriesPage?.highlightedReelsLink,
     "order"
   );
-  const featuredVideos = mapWordPressVideos(
-    patientStoriesPage?.highlightedVideos,
-    "number"
+  const featuredVideos = mergeUniqueVideos(
+    youtubeChannelVideos,
+    mapWordPressVideos(patientStoriesPage?.highlightedVideos, "number")
   );
 
   useEffect(() => {
@@ -344,9 +382,13 @@ const PatientStoriesPage = ({ data }) => {
           <Swiper
             className="story-media-slider story-media-slider--videos"
             modules={[Navigation]}
-            loop={featuredVideos.length > 3}
+            loop={false}
             navigation
-            slideToClickedSlide
+            slidesPerGroup={1}
+            roundLengths
+            watchOverflow
+            grabCursor
+            focusableElements="input, select, option, textarea, video, label"
             spaceBetween={24}
             slidesPerView={3}
             breakpoints={{

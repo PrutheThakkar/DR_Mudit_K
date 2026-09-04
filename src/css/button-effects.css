@@ -12,6 +12,7 @@
 
 :where(
   .btn,
+  .header__cta,
   .details-btn,
   .faq-section__button,
   .contact-form__submit,
@@ -35,6 +36,12 @@
       )
       border-box !important;
   color: #ffffff !important;
+  font-family: "Manrope", Arial, sans-serif !important;
+  font-size: 15px !important;
+  font-weight: 600 !important;
+  line-height: 1.2 !important;
+  text-align: center;
+  text-decoration: none;
   box-shadow:
     0 0 10px rgba(40, 117, 245, 0.45),
     0 8px 18px rgba(0, 0, 0, 0.3) !important;
@@ -47,6 +54,7 @@
 
 :where(
   .btn,
+  .header__cta,
   .details-btn,
   .faq-section__button,
   .contact-form__submit,
@@ -75,6 +83,7 @@
 
 :where(
   .btn,
+  .header__cta,
   .details-btn,
   .faq-section__button,
   .contact-form__submit,
@@ -87,6 +96,7 @@
 @media (prefers-reduced-motion: reduce) {
   :where(
     .btn,
+    .header__cta,
     .details-btn,
     .faq-section__button,
     .contact-form__submit,
@@ -100,6 +110,7 @@
 @media (max-width: 767px) {
   :where(
     .btn,
+    .header__cta,
     .details-btn,
     .faq-section__button,
     .contact-form__submit,
