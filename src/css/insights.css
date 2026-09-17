@@ -154,6 +154,37 @@
   padding-bottom: clamp(80px, 10vw, 155px);
 }
 
+.insights-faq__tabs {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px 14px;
+  margin-bottom: 34px;
+}
+
+.insights-faq__tab {
+  padding: 10px 22px;
+  border: 1px solid #505050;
+  border-radius: 999px;
+  background: none;
+  color: #d7d7d7;
+  font-family: "Manrope", Arial, sans-serif;
+  font-size: clamp(.82rem, .95vw, .95rem);
+  white-space: nowrap;
+  transition: border-color .25s ease, background-color .25s ease, color .25s ease;
+}
+
+.insights-faq__tab:hover {
+  border-color: #2875f5;
+  color: #fff;
+}
+
+.insights-faq__tab.active {
+  border-color: #2875f5;
+  background: #2875f5;
+  color: #fff;
+}
+
 .insights-faq__list {
   border-top: 1px solid #505050;
 }

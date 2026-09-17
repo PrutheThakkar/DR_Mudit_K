@@ -28,18 +28,19 @@ const ArrowIcon = () => (
 );
 
 const InsightsPage = ({ data }) => {
+  const [activeTab, setActiveTab] = useState(0);
   const [openFaq, setOpenFaq] = useState(0);
   const posts = data?.allWpPost?.nodes || [];
   const banner = data?.bannerPage?.nodes?.[0]?.commonBannerImage;
-  const faqs = (data?.allWpFaq?.nodes || [])
-    .flatMap((faqPost) => faqPost.faqsection?.faq || [])
-    .filter(
-      (faq, index, allFaqs) =>
-        faq.que &&
-        allFaqs.findIndex(
-          (item) => getPlainText(item.que) === getPlainText(faq.que)
-        ) === index
-    );
+  const faqGroups = (data?.allWpFaq?.nodes || [])
+    .flatMap((faqPost) => faqPost.faqsection?.newFaq || [])
+    .filter((group) => group.expertyName && group.faq?.length);
+  const activeFaqs = faqGroups[activeTab]?.faq || [];
+
+  const handleTabClick = (index) => {
+    setActiveTab(index);
+    setOpenFaq(0);
+  };
 
   return (
     <Layout>
@@ -93,22 +94,39 @@ const InsightsPage = ({ data }) => {
             <span>Clear answers to common concerns</span>
             <h2>FAQs</h2>
           </div>
+          <div className="insights-faq__tabs" role="tablist">
+            {faqGroups.map((group, index) => (
+              <button
+                type="button"
+                role="tab"
+                key={group.expertyName}
+                aria-selected={activeTab === index}
+                className={`insights-faq__tab ${
+                  activeTab === index ? "active" : ""
+                }`}
+                onClick={() => handleTabClick(index)}
+              >
+                {group.expertyName}
+              </button>
+            ))}
+          </div>
+
           <div className="insights-faq__list">
-            {faqs.map((faq, index) => {
+            {activeFaqs.map((faq, index) => {
               const isOpen = openFaq === index;
               return (
                 <div
                   className={`insights-faq__item ${isOpen ? "is-open" : ""}`}
-                  key={`${getPlainText(faq.que)}-${index}`}
+                  key={`${activeTab}-${getPlainText(faq.question)}-${index}`}
                 >
                   <h3>
                     <button
                       type="button"
                       aria-expanded={isOpen}
-                      aria-controls={`faq-answer-${index}`}
+                      aria-controls={`faq-answer-${activeTab}-${index}`}
                       onClick={() => setOpenFaq(isOpen ? -1 : index)}
                     >
-                      <span>{getPlainText(faq.que)}</span>
+                      <span>{getPlainText(faq.question)}</span>
                       <svg viewBox="0 0 14 8" aria-hidden="true">
                         <path
                           d="m1 1 6 6 6-6"
@@ -120,11 +138,13 @@ const InsightsPage = ({ data }) => {
                     </button>
                   </h3>
                   <div
-                    id={`faq-answer-${index}`}
+                    id={`faq-answer-${activeTab}-${index}`}
                     className="insights-faq__answer"
                     hidden={!isOpen}
                   >
-                    <div dangerouslySetInnerHTML={{ __html: faq.ans || "" }} />
+                    <div
+                      dangerouslySetInnerHTML={{ __html: faq.answer || "" }}
+                    />
                   </div>
                 </div>
               );
@@ -172,9 +192,12 @@ export const query = graphql`
     allWpFaq {
       nodes {
         faqsection {
-          faq {
-            que
-            ans
+          newFaq {
+            expertyName
+            faq {
+              answer
+              question
+            }
           }
         }
       }
